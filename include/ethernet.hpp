@@ -1,11 +1,18 @@
+#ifndef ETHERNET_HPP
+#define ETHERNET_HPP
+
 #include <cstdint>
 
-struct ethernet
+#include <mac.hpp>
+
+struct Ethernet
 {
 	uint8_t preamble[8];
-	uint8_t destination_mac_address[6];
-	uint8_t source_mac_address[6];
+	Mac dst;
+	Mac src;
 	uint8_t length[2];
 	uint8_t* data;
 	uint8_t fcs[4];
 };
+
+#endif

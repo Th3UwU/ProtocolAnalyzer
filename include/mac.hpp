@@ -1,3 +1,6 @@
+#ifndef MAC_HPP
+#define MAC_HPP
+
 #include <cstdint>
 
 struct Mac
@@ -7,3 +10,5 @@ struct Mac
 	void print(void);
 	void randomize(void);
 };
+
+#endif
