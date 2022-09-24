@@ -1,21 +1,37 @@
 cmake_minimum_required(VERSION 3.22)
-
-set(PROJECT_NAME ProtocolAnalyzer)
-project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
-
+set(CMAKE_CXX_STANDARD 17)
 list(APPEND CMAKE_CXX_FLAGS "-Wall -pedantic")
 
+# ProtocolAnalyzer
+set(PROJECT_ANALYZER ProtocolAnalyzer)
+project(${PROJECT_ANALYZER} VERSION 1.0.0 LANGUAGES CXX)
+
 file(
-	GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
-	"include/*.hpp"
-	"src/*.cpp"
+	GLOB_RECURSE SOURCES_ANALYZER CONFIGURE_DEPENDS
+	"./analyzer/include/*.hpp"
+	"./analyzer/src/*.cpp"
 )
 
-set(CMAKE_CXX_STANDARD 17)
-
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_ANALYZER} ${SOURCES_ANALYZER})
 
 target_include_directories(
-	${PROJECT_NAME} PRIVATE
-	"include"
+	${PROJECT_ANALYZER} PRIVATE
+	"./analyzer/include"
+)
+
+# RNDPK
+set(PROJECT_RNDPK RNDPK)
+project(${PROJECT_RNDPK} VERSION 1.0.0 LANGUAGES CXX)
+
+file(
+	GLOB_RECURSE SOURCES_RNDPK CONFIGURE_DEPENDS
+	"./rndpk/include/*.hpp"
+	"./rndpk/src/*.cpp"
+)
+
+add_executable(${PROJECT_RNDPK} ${SOURCES_RNDPK})
+
+target_include_directories(
+	${PROJECT_RNDPK} PRIVATE
+	"./rndpk/include"
 )

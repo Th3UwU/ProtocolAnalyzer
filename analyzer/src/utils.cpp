@@ -7,6 +7,6 @@ uint32_t check_sum(uint8_t* bytes, uint16_t size)
 	for (uint16_t i = 0; i < size; i++)
 		res += bytes[i];
 
-	res % 0xFFFFFFFF;
+	res %= 0xFFFFFFFF;
 	return res;
 }
