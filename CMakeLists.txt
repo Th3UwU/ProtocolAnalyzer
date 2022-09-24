@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
-set(CMAKE_CXX_STANDARD 17)
 list(APPEND CMAKE_CXX_FLAGS "-Wall -pedantic")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # ProtocolAnalyzer
 set(PROJECT_ANALYZER ProtocolAnalyzer)
