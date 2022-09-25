@@ -6,6 +6,7 @@
 Data::Data(void)
 {
 	this->raw = nullptr;
+	this->length = 0;
 }
 
 Data::~Data(void)
@@ -13,11 +14,11 @@ Data::~Data(void)
 	operator delete(this->raw);
 }
 
-void Data::print(uint16_t size, uint16_t line_length, bool hex)
+void Data::print(uint16_t line_length, bool hex)
 {
 	uint16_t l = 0;
 
-	for (uint16_t i = 0; i < size; i++)
+	for (uint16_t i = 0; i < length; i++)
 	{
 		if (hex)
 		{
@@ -32,20 +33,18 @@ void Data::print(uint16_t size, uint16_t line_length, bool hex)
 		}
 
 		l++;
-		if (l == line_length)
+		if ((l == line_length) and (i < length - 1))
 			{printf("\n"); l = 0;}
 	}
 }
 
-uint16_t Data::randomize(uint16_t min, uint16_t max)
+void Data::randomize(uint16_t min, uint16_t max)
 {
 	this->~Data();
 
-	uint16_t size = (rand() % (max - min + 1)) + min;
-	this->raw = (uint8_t*)operator new(size);
+	this->length = (rand() % (max - min + 1)) + min;
+	this->raw = (uint8_t*)operator new(this->length);
 
-	for (uint16_t i = 0; i < size; i++)
+	for (uint16_t i = 0; i < length; i++)
 		this->raw[i] = rand() % 256;
-
-	return size;
 }

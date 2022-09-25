@@ -11,8 +11,6 @@ Ethernet::Ethernet(void)
 	memset(this->preamble, 0, 8);
 	memset(this->type, 0, 2);
 	this->fcs = 0;
-
-	this->length = 0;
 }
 
 void Ethernet::print(bool hex)
@@ -36,7 +34,7 @@ void Ethernet::print(bool hex)
 	printf("\n\n");
 
 	printf("\033[1;31mData\033[0m\n");
-	this->data.print(this->length, 16, hex);
+	this->data.print(16, hex);
 	printf("\n\n");
 
 	printf("\033[1;31mChecksum\033[0m\n");
@@ -48,28 +46,31 @@ void Ethernet::print(bool hex)
 	printf("\n\n");
 }
 
-void Ethernet::randomize(void)
+void Ethernet::randomize(uint16_t min, uint16_t max)
 {
 	dst.randomize();
 	src.randomize();
-	this->length = this->data.randomize(64, 256);
+	this->data.randomize(min, max);
 	this->type[0] = rand() % 256;
 	this->type[1] = rand() % 256;
 	
 	// Calc checksum
-	uint8_t* bytes = (uint8_t*)operator new(this->length + 14);
+	uint8_t* bytes = (uint8_t*)operator new(this->data.length + 14);
 
 	memcpy((void*)&bytes[0], (void*)this->dst.address, 6);
 	memcpy((void*)&bytes[6], (void*)this->src.address, 6);
 	bytes[12] = this->type[0];
 	bytes[13] = this->type[1];
-	memcpy((void*)&bytes[14], (void*)this->data.raw, this->length);
+	memcpy((void*)&bytes[14], (void*)this->data.raw, this->data.length);
 
 	this->fcs = 0;
-	for (uint16_t i = 0; i < (14 + this->length); i++)
+	for (uint16_t i = 0; i < (14 + this->data.length); i++)
 		this->fcs += (unsigned char)bytes[i];
 
-	printf("\n\n%02X\n\n", this->data.raw[0]);
+	/*
+	printf("\n\n%02X\n\n", this->data.raw[this->data.length - 1]);
+	printf("\n\n%02X\n\n", bytes[14 + this->data.length - 1]);
+	*/
 
 
 	operator delete(bytes);

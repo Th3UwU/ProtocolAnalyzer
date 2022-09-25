@@ -11,9 +11,10 @@ int main(void)
 	srand(time(nullptr));
 
 	Ethernet eth;
-	eth.randomize();
-	//eth.length = eth.data.randomize(64, 128);
+	eth.randomize(64, 64);
 	eth.print(true);
+
+	printf("SIZE: %u\n", eth.data.length);
 
 	return 0;
 }

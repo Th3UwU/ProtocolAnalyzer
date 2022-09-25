@@ -12,7 +12,7 @@ struct Ethernet
 	~Ethernet(void) = default;
 
 	void print(bool hex = false);
-	void randomize(void);
+	void randomize(uint16_t min, uint16_t max);
 	
 	uint8_t preamble[8];
 	Mac dst;
@@ -20,9 +20,6 @@ struct Ethernet
 	uint8_t type[2];
 	Data data;
 	uint32_t fcs;
-
-	// AUX
-	uint16_t length;
 };
 
 #endif
