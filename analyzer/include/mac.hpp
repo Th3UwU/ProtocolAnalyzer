@@ -5,6 +5,9 @@
 
 struct Mac
 {
+	Mac(void);
+	~Mac(void) = default;
+
 	uint8_t address[6];
 
 	void print(void);

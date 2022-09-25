@@ -10,14 +10,10 @@ int main(void)
 {
 	srand(time(nullptr));
 
-	Data data;
-	uint16_t size = data.randomize(256, 256);
-	printf("\n\n");
-	data.print(size, 16);
-	printf("\n\n");
-
-	printf("SIZE: %lu\n", sizeof(Ethernet));
-
+	Ethernet eth;
+	eth.randomize();
+	//eth.length = eth.data.randomize(64, 128);
+	eth.print(true);
 
 	return 0;
 }

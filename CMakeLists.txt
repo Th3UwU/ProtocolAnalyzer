@@ -28,13 +28,7 @@ project(${PROJECT_RNDPK} VERSION 1.0.0 LANGUAGES CXX)
 
 file(
 	GLOB_RECURSE SOURCES_RNDPK CONFIGURE_DEPENDS
-	"./rndpk/include/*.hpp"
 	"./rndpk/src/*.cpp"
 )
 
 add_executable(${PROJECT_RNDPK} ${SOURCES_RNDPK})
-
-target_include_directories(
-	${PROJECT_RNDPK} PRIVATE
-	"./rndpk/include"
-)

@@ -10,7 +10,7 @@ struct Data
 
 	uint8_t* raw;
 	
-	void print(uint16_t size, uint16_t line_length);
+	void print(uint16_t size, uint16_t line_length, bool hex);
 	uint16_t randomize(uint16_t min, uint16_t max);
 };
 
