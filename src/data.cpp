@@ -22,14 +22,14 @@ void Data::print(uint16_t line_length, bool hex)
 	{
 		if (hex)
 		{
-			printf("\033[1;32m%02X \033[0m", this->raw[i]);
+			printf("%02X ", this->raw[i]);
 		}
 		else
 		{
 			if ((this->raw[i] >= 32) and (this->raw[i] <= 126))
-				printf("\033[1;32m%c \033[0m", this->raw[i]);
+				printf("%c ", this->raw[i]);
 			else
-				printf("\033[1;36m. \033[0m");
+				printf(". ");
 		}
 
 		l++;

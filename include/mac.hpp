@@ -8,7 +8,7 @@ struct Mac
 	Mac(void);
 	~Mac(void) = default;
 
-	uint8_t address[6];
+	unsigned char address[6];
 
 	void print(void);
 	void randomize(void);

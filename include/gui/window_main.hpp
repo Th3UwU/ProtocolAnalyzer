@@ -5,10 +5,10 @@
 
 #include <wx/frame.h>
 
-class MainFrame : public wxFrame
+class WindowMain : public wxFrame
 {
 public:
-	MainFrame();
+	WindowMain();
 
 	void OnOpenFile(wxCommandEvent& event);
 	void OnHello(wxCommandEvent& event);

@@ -8,11 +8,11 @@ struct Data
 	Data(void);
 	~Data(void);
 
-	uint8_t* raw;
-	uint16_t length;
+	unsigned char* raw;
+	unsigned short length;
 	
-	void print(uint16_t line_length, bool hex);
-	void randomize(uint16_t min, uint16_t max);
+	void print(unsigned short line_length, bool hex);
+	void randomize(unsigned short min, unsigned short max);
 };
 
 #endif

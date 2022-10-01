@@ -15,34 +15,34 @@ Ethernet::Ethernet(void)
 
 void Ethernet::print(bool hex)
 {
-	printf("\033[1;31mPreamble\033[0m\n");
+	printf("Preamble\n");
 	for (uint8_t i = 0; i < 8; i++)
-		printf("\033[1;32m%02X \033[0m", this->preamble[i]);
+		printf("%02X ", preamble[i]);
 	printf("\n\n");
 
-	printf("\033[1;31mDestination Address\033[0m\n");
+	printf("Destination Address\n");
 	dst.print();
 	printf("\n\n");
 
-	printf("\033[1;31mSource Address\033[0m\n");
+	printf("Source Address\n");
 	src.print();
 	printf("\n\n");
 
-	printf("\033[1;31mType\033[0m\n");
-	printf("\033[1;32m%02X \033[0m", this->type[0]);
-	printf("\033[1;32m%02X\033[0m", this->type[1]);
+	printf("Type\n");
+	printf("%02X ", type[0]);
+	printf("%02X", type[1]);
 	printf("\n\n");
 
-	printf("\033[1;31mData\033[0m\n");
-	this->data.print(16, hex);
+	printf("Data\n");
+	data.print(16, hex);
 	printf("\n\n");
 
-	printf("\033[1;31mChecksum\033[0m\n");
+	printf("Checksum\n");
 
 	for (uint8_t i = 0; i < 4; i++)
-		printf("\033[1;32m%02X \033[0m", ((uint8_t*)&this->fcs)[i]);
+		printf("%02X ", ((uint8_t*)&fcs)[i]);
 
-	printf("\033[1;36m(%u)\033[0m", this->fcs);
+	printf("(%u)", fcs);
 	printf("\n\n");
 }
 
@@ -71,7 +71,6 @@ void Ethernet::randomize(uint16_t min, uint16_t max)
 	printf("\n\n%02X\n\n", this->data.raw[this->data.length - 1]);
 	printf("\n\n%02X\n\n", bytes[14 + this->data.length - 1]);
 	*/
-
 
 	operator delete(bytes);
 }

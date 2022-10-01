@@ -1,10 +1,11 @@
 #ifndef ETHERNET_HPP
 #define ETHERNET_HPP
 
-#include <cstdint>
-
 #include "mac.hpp"
 #include "data.hpp"
+
+#include <cstdint>
+#include <iostream>
 
 struct Ethernet
 {
@@ -12,14 +13,14 @@ struct Ethernet
 	~Ethernet(void) = default;
 
 	void print(bool hex = false);
-	void randomize(uint16_t min, uint16_t max);
-	
-	uint8_t preamble[8];
+	void randomize(unsigned short min, unsigned short max);
+
+	unsigned char preamble[8];
 	Mac dst;
 	Mac src;
-	uint8_t type[2];
+	unsigned char type[2];
 	Data data;
-	uint32_t fcs;
+	unsigned int fcs;
 };
 
 #endif

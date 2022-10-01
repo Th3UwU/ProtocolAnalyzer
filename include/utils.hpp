@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-uint32_t check_sum(uint8_t* bytes, uint16_t size);
+unsigned int check_sum(unsigned char* bytes, unsigned short size);
 
 #endif
