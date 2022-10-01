@@ -13,11 +13,11 @@ bool AnalyserApp::OnInit()
 	WindowMain* frame = new WindowMain();
 	frame->Show(true);
 
-	//
+	/*
 	Ethernet et;
 	et.randomize(64, 128);
 	et.print(true);
-	//
+	*/
 	return true;
 }
 

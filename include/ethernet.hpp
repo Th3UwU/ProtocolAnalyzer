@@ -14,13 +14,12 @@ struct Ethernet
 
 	void print(bool hex = false);
 	void randomize(unsigned short min, unsigned short max);
+	void loadFromFile(const char* path);
 
-	unsigned char preamble[8];
 	Mac dst;
 	Mac src;
-	unsigned char type[2];
+	unsigned short type;
 	Data data;
-	unsigned int fcs;
 };
 
 #endif

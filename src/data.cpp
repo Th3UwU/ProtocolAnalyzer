@@ -48,3 +48,9 @@ void Data::randomize(uint16_t min, uint16_t max)
 	for (uint16_t i = 0; i < length; i++)
 		this->raw[i] = rand() % 256;
 }
+
+void Data::alloc(unsigned int bytes)
+{
+	this->raw = (unsigned char*)operator new(bytes);
+	this->length = bytes;
+}

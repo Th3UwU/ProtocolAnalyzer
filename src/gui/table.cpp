@@ -4,22 +4,22 @@ Table::Table(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &
 : wxGrid(parent, id, pos, size, style, name)
 {
 	// Column size
-	columnSize = {1, 1, 2, 4};
+	columnSize = {1, 1, 2};
 
 	Bind(wxEVT_SIZE, &Table::OnSize, this);
 }
 
 void Table::OnSize(wxSizeEvent& event)
 {
-	unsigned int tableWidth = GetSize().GetWidth() - 1;
+	int tableWidth = GetSize().GetWidth();
 
-	unsigned int totalSize = 0;
-	for (unsigned int i = 0; i < 4; i++)
+	int totalSize = 0;
+	for (unsigned int i = 0; i < columnSize.size(); i++)
 		totalSize += columnSize[i];
 
-	unsigned int proportion = tableWidth / totalSize;
+	int proportion = tableWidth / totalSize;
 
-	for (unsigned int i = 0; i < 4; i++)
+	for (int i = 0; i < GetNumberCols(); i++)
 		SetColSize(i, columnSize[i] * proportion);
 
 	event.Skip();

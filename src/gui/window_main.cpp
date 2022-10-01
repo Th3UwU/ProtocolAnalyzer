@@ -46,11 +46,15 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	wxPanel* panel = new wxPanel(panelMain, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
 	panel->SetBackgroundColour(wxColour(100, 200, 100));
 	table = new Table(panelMain, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	table->CreateGrid(12, 4);
+	table->CreateGrid(3, 3);
 	table->SetUseNativeColLabels(true);
 	table->EnableEditing(false);
-	table->SetRowLabelSize(1);
-	//table->SetDefaultCellFitMode(wxGridFitMode::Overflow());
+	table->DisableDragRowSize();
+	table->DisableDragColSize();
+	table->SetRowLabelSize(0);
+	table->SetColLabelValue(0, L"ID");
+	table->SetColLabelValue(1, L"Tamaño");
+	table->SetColLabelValue(2, L"Protocolo");
 
 	sizer->Add(panel, 1, wxEXPAND | wxALL, 32);
 	sizer->Add(table, 1, wxEXPAND | wxALL, 32);

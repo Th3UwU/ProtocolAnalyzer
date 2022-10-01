@@ -12,7 +12,7 @@ public:
 
 	void OnSize(wxSizeEvent& event);
 
-	std::array<unsigned int, 4> columnSize;
+	std::array<unsigned int, 3> columnSize;
 };
 
 #endif
