@@ -107,7 +107,8 @@ void WindowMain::refreshItems(void)
 	int rows = table->GetNumberRows();
 	if (rows) table->DeleteRows(0, rows);
 
-
+	for (auto& packet : items)
+		appendItem(packet);
 }
 
 
@@ -115,7 +116,7 @@ void WindowMain::appendItem(const std::shared_ptr<Packet>& packet)
 {
 	table->AppendRows(1);
 	int index = table->GetNumberRows() - 1;
-	
+
 	table->SetCellValue(index, 0, fmt::format("{0:d}", index));
 	table->SetCellValue(index, 1, fmt::format("{0:d}", packet->getSize()));
 	table->SetCellValue(index, 2, packet->getType());

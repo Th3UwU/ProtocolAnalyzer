@@ -1,6 +1,7 @@
 #include "data.hpp"
 
-#include <cstdio>
+#include <fmt/core.h>
+#include <fmt/color.h>
 #include <cstdlib>
 
 Data::Data(void)
@@ -14,38 +15,38 @@ Data::~Data(void)
 	operator delete(this->raw);
 }
 
-void Data::print(uint16_t line_length, bool hex)
+void Data::print(unsigned short line_length, bool hex)
 {
-	uint16_t l = 0;
+	unsigned short l = 0;
 
-	for (uint16_t i = 0; i < length; i++)
+	for (unsigned short i = 0; i < length; i++)
 	{
 		if (hex)
 		{
-			printf("%02X ", this->raw[i]);
+			fmt::print(fmt::fg(fmt::color::light_pink), "{0:02X} ", this->raw[i]);
 		}
 		else
 		{
 			if ((this->raw[i] >= 32) and (this->raw[i] <= 126))
-				printf("%c ", this->raw[i]);
+				fmt::print(fmt::fg(fmt::color::light_pink), "{0:c} ", this->raw[i]);
 			else
-				printf(". ");
+				fmt::print(fmt::fg(fmt::color::light_pink), ". ");
 		}
 
 		l++;
 		if ((l == line_length) and (i < length - 1))
-			{printf("\n"); l = 0;}
+			{fmt::print("\n"); l = 0;}
 	}
 }
 
-void Data::randomize(uint16_t min, uint16_t max)
+void Data::randomize(unsigned short min, unsigned short max)
 {
 	this->~Data();
 
 	this->length = (rand() % (max - min + 1)) + min;
-	this->raw = (uint8_t*)operator new(this->length);
+	this->raw = (unsigned char*)operator new(this->length);
 
-	for (uint16_t i = 0; i < length; i++)
+	for (unsigned short i = 0; i < length; i++)
 		this->raw[i] = rand() % 256;
 }
 

@@ -91,7 +91,6 @@ void WindowOpen::OnImport(wxCommandEvent& event)
 		WindowMain* windowMain = (WindowMain*)GetParent();
 
 		std::shared_ptr<Ethernet> eth = std::make_shared<Ethernet>();
-		fmt::print("ETHERNET PACKET");
 		eth->loadFromFile(inPath->GetValue());
 		eth->print(true);
 

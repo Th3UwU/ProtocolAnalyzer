@@ -4,6 +4,9 @@
 #include <cstring>
 #include <cstdlib>
 
+#include <fmt/core.h>
+#include <fmt/color.h>
+
 Ethernet::Ethernet(void)
 : dst(), src(), data()
 {
@@ -12,25 +15,25 @@ Ethernet::Ethernet(void)
 
 void Ethernet::print(bool hex)
 {
-	printf("Destination Address\n");
+	fmt::print(fmt::fg(fmt::color::green_yellow), "Destination Address\n");
 	dst.print();
-	printf("\n\n");
+	fmt::print("\n\n");
 
-	printf("Source Address\n");
+	fmt::print(fmt::fg(fmt::color::green_yellow), "Source Address\n");
 	src.print();
-	printf("\n\n");
+	fmt::print("\n\n");
 
-	printf("Type\n");
-	printf("%02X ", ((unsigned char*)&type)[0]);
-	printf("%02X", ((unsigned char*)&type)[1]);
-	printf(" (%u)", this->type);
+	fmt::print(fmt::fg(fmt::color::green_yellow), "Type\n");
+	fmt::print("{0:02X} ", ((unsigned char*)&type)[0]);
+	fmt::print("{0:02X}", ((unsigned char*)&type)[1]);
+	fmt::print(" ({0:d})", this->type);
 	if (this->type == 8)
-		printf(" IPV4");
-	printf("\n\n");
+		fmt::print(fmt::fg(fmt::color::aquamarine), " IPV4");
+	fmt::print("\n\n");
 
-	printf("Data\n");
+	fmt::print(fmt::fg(fmt::color::green_yellow), "Data\n");
 	data.print(16, hex);
-	printf("\n\n");
+	fmt::print("\n\n");
 }
 
 void Ethernet::randomize(uint16_t min, uint16_t max)
