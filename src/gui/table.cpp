@@ -1,4 +1,10 @@
 #include "gui/table.hpp"
+#include <fmt/core.h>
+
+enum
+{
+	ID_SELECTED_ROW = 1
+};
 
 Table::Table(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style, const wxString &name)
 : wxGrid(parent, id, pos, size, style, name)
@@ -7,6 +13,7 @@ Table::Table(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &
 	columnSize = {1, 1, 2};
 
 	Bind(wxEVT_SIZE, &Table::OnSize, this);
+	Bind(wxEVT_GRID_SELECT_CELL, &Table::OnSelectedRow, this);
 }
 
 void Table::OnSize(wxSizeEvent& event)
@@ -23,4 +30,9 @@ void Table::OnSize(wxSizeEvent& event)
 		SetColSize(i, columnSize[i] * proportion);
 
 	event.Skip();
+}
+
+void Table::OnSelectedRow(wxGridEvent& event)
+{
+	fmt::print("SELECTED ROW: {0:d}\n", event.GetRow());
 }
