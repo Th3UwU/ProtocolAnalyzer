@@ -1,8 +1,6 @@
 #include "gui/app.hpp"
 #include "gui/window_main.hpp"
 
-#include "ethernet.hpp"
-
 #include <iostream>
 
 // Main

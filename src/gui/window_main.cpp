@@ -7,6 +7,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/filedlg.h>
+#include <fmt/core.h>
 
 #include <iostream>
 
@@ -46,9 +47,10 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	wxPanel* panel = new wxPanel(panelMain, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
 	panel->SetBackgroundColour(wxColour(100, 200, 100));
 	table = new Table(panelMain, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	table->CreateGrid(3, 3);
+	table->CreateGrid(0, 3);
 	table->SetUseNativeColLabels(true);
 	table->EnableEditing(false);
+	table->SetSelectionMode(wxGrid::wxGridSelectRows);
 	table->DisableDragRowSize();
 	table->DisableDragColSize();
 	table->SetRowLabelSize(0);
@@ -96,5 +98,25 @@ void WindowMain::OnOpenFile(wxCommandEvent& event)
 void WindowMain::OnHello(wxCommandEvent& event)
 {
 	wxLogMessage(L"Hello world from wxWidgets!");
+	refreshItems();
 }
 
+void WindowMain::refreshItems(void)
+{
+	table->ClearGrid();
+	int rows = table->GetNumberRows();
+	if (rows) table->DeleteRows(0, rows);
+
+
+}
+
+
+void WindowMain::appendItem(const std::shared_ptr<Packet>& packet)
+{
+	table->AppendRows(1);
+	int index = table->GetNumberRows() - 1;
+	
+	table->SetCellValue(index, 0, fmt::format("{0:d}", index));
+	table->SetCellValue(index, 1, fmt::format("{0:d}", packet->getSize()));
+	table->SetCellValue(index, 2, packet->getType());
+}

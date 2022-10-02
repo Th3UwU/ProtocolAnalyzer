@@ -1,5 +1,4 @@
-#include "ethernet.hpp"
-#include "utils.hpp"
+#include "packet.hpp"
 
 #include <cstdio>
 #include <cstring>
@@ -58,4 +57,14 @@ void Ethernet::loadFromFile(const char* path)
 	fread((void*)data.raw, 1, dataSize, file);
 
 	fclose(file);
+}
+
+unsigned int Ethernet::getSize(void)
+{
+	return this->data.length + 14;
+}
+
+std::string Ethernet::getType(void)
+{
+	return std::string("Ethernet");
 }

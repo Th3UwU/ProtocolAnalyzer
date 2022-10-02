@@ -1,8 +1,6 @@
 #include "gui/window_open.hpp"
 #include "gui/window_main.hpp"
 
-#include "ethernet.hpp"
-
 #include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -11,6 +9,9 @@
 #include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/filedlg.h>
+
+#include <fmt/core.h>
+
 
 enum
 {
@@ -87,10 +88,19 @@ void WindowOpen::OnImport(wxCommandEvent& event)
 {
 	if (selector->GetSelection() == 0)
 	{
-		printf("ETHERNET\n");
-		Ethernet eth;
-		eth.loadFromFile(inPath->GetValue());
-		eth.print(true);
+		WindowMain* windowMain = (WindowMain*)GetParent();
+
+		std::shared_ptr<Ethernet> eth = std::make_shared<Ethernet>();
+		fmt::print("ETHERNET PACKET");
+		eth->loadFromFile(inPath->GetValue());
+		eth->print(true);
+
+		// Append to table
+		windowMain->items.push_back(eth);
+		windowMain->appendItem(eth);
+
+		//
+		Close(true);
 	}
 	else
 		printf("NO es ethernet\n");

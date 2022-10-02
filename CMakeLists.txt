@@ -24,4 +24,5 @@ target_include_directories(
 
 target_link_libraries(${PROJECT_NAME}
 	wxbase32u
-	wxmsw32u_core)
+	wxmsw32u_core
+	fmt)
