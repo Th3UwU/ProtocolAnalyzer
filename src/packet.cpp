@@ -1,9 +1,5 @@
 #include "packet.hpp"
 
-#include <cstdio>
-#include <cstring>
-#include <cstdlib>
-
 #include <fmt/core.h>
 #include <fmt/color.h>
 
@@ -24,12 +20,18 @@ void Ethernet::print(bool hex)
 	fmt::print("\n\n");
 
 	fmt::print(fmt::fg(fmt::color::green_yellow), "Type\n");
-	fmt::print("{0:02X} ", ((unsigned char*)&type)[0]);
-	fmt::print("{0:02X}", ((unsigned char*)&type)[1]);
-	fmt::print(" ({0:d})", this->type);
-	if (this->type == 8)
-		fmt::print(fmt::fg(fmt::color::aquamarine), " IPV4");
-	fmt::print("\n\n");
+	std::string protocolType;
+	switch (this->type)
+	{
+		case 8: protocolType = "IPV4"; break;
+		default: protocolType = "Unknown"; break;
+	}
+
+	fmt::print
+	(
+		fmt::fg(fmt::color::aquamarine), "{0:02X} {1:02X} ({2:d}) {3:s}\n\n",
+		((unsigned char*)&this->type)[0], ((unsigned char*)&this->type)[1], this->type, protocolType
+	);
 
 	fmt::print(fmt::fg(fmt::color::green_yellow), "Data\n");
 	data.print(16, hex);

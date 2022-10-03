@@ -9,8 +9,6 @@
 #include <wx/filedlg.h>
 #include <fmt/core.h>
 
-#include <iostream>
-
 //
 enum
 {
@@ -40,13 +38,10 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	SetStatusText("Welcome to wxWidgets!");
 
 	//
-	wxBoxSizer* sizerMain = new wxBoxSizer(wxVERTICAL);
-	wxPanel* panelMain = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
-	panelMain->SetBackgroundColour(wxColour(100, 100, 200));
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	wxPanel* panel = new wxPanel(panelMain, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
+	wxPanel* panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
 	panel->SetBackgroundColour(wxColour(100, 200, 100));
-	table = new Table(panelMain, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	table = new Table(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	table->CreateGrid(0, 3);
 	table->SetUseNativeColLabels(true);
 	table->EnableEditing(false);
@@ -58,11 +53,9 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	table->SetColLabelValue(1, L"Tamaño");
 	table->SetColLabelValue(2, L"Protocolo");
 
-	sizer->Add(panel, 1, wxEXPAND | wxALL, 32);
-	sizer->Add(table, 1, wxEXPAND | wxALL, 32);
-	panelMain->SetSizerAndFit(sizer);
-	sizerMain->Add(panelMain, 1, wxEXPAND | wxALL, 8);
-	this->SetSizerAndFit(sizerMain);
+	sizer->Add(table, 1, wxEXPAND | wxALL, 0);
+	sizer->Add(panel, 1, wxEXPAND | wxALL, 0);
+	this->SetSizerAndFit(sizer);
 
 	// Bind
 	Bind(wxEVT_MENU, &WindowMain::OnOpenFile, this, ID_Open_File);
