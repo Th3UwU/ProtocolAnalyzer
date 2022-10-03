@@ -5,6 +5,7 @@
 #include "packet.hpp"
 
 #include <wx/frame.h>
+#include <wx/sizer.h>
 #include <vector>
 #include <memory>
 
@@ -23,6 +24,9 @@ public:
 
 	Table* table;
 	std::vector<std::shared_ptr<Packet>> items;
+
+	wxBoxSizer* sizerPanel;
+	wxPanel* panel;
 };
 
 #endif

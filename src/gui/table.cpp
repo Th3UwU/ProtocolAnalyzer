@@ -1,6 +1,11 @@
 #include "gui/table.hpp"
 #include <fmt/core.h>
 
+#include "gui/window_main.hpp"
+
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+
 enum
 {
 	ID_SELECTED_ROW = 1
@@ -35,4 +40,15 @@ void Table::OnSize(wxSizeEvent& event)
 void Table::OnSelectedRow(wxGridEvent& event)
 {
 	fmt::print("SELECTED ROW: {0:d}\n", event.GetRow());
+
+	WindowMain* parent = (WindowMain*)GetParent();
+
+	// Clear widgets
+	parent->sizerPanel->Clear(false);
+	parent->panel->DestroyChildren();
+
+	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"Hola!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
+	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"Como!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
+	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"estas!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
+	parent->sizerPanel->Layout();
 }

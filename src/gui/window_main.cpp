@@ -6,6 +6,7 @@
 #include <wx/log.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <wx/filedlg.h>
 #include <fmt/core.h>
 
@@ -39,7 +40,9 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 
 	//
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	wxPanel* panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
+
+	sizerPanel = new wxBoxSizer(wxVERTICAL);
+	panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
 	panel->SetBackgroundColour(wxColour(100, 200, 100));
 	table = new Table(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	table->CreateGrid(0, 3);
@@ -53,6 +56,7 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	table->SetColLabelValue(1, L"Tamaño");
 	table->SetColLabelValue(2, L"Protocolo");
 
+	panel->SetSizer(sizerPanel);
 	sizer->Add(table, 1, wxEXPAND | wxALL, 0);
 	sizer->Add(panel, 1, wxEXPAND | wxALL, 0);
 	this->SetSizerAndFit(sizer);
