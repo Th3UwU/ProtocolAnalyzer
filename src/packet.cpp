@@ -14,15 +14,14 @@ Ethernet::Ethernet(void)
 
 void Ethernet::print(bool hex)
 {
-	fmt::print(fmt::fg(fmt::color::green_yellow), "Destination Address\n");
+	fmt::print(fmt::emphasis::bold | fmt::fg(fmt::color::green_yellow), "Destination Address\n");
 	fmt::print(dst.getString(true));
 	fmt::print("\n\n");
 
-	fmt::print(fmt::fg(fmt::color::green_yellow), "Source Address\n");
-	fmt::print(src.getString(true));
-	fmt::print("\n\n");
+	fmt::print(fmt::emphasis::bold | fmt::fg(fmt::color::green_yellow), "Source Address\n");
+	fmt::print("{0:s}\n\n", src.getString(true));
 
-	fmt::print(fmt::fg(fmt::color::green_yellow), "Type\n");
+	fmt::print(fmt::emphasis::bold | fmt::fg(fmt::color::green_yellow), "Type\n");
 	std::string protocolType;
 	switch (this->type)
 	{
@@ -36,9 +35,8 @@ void Ethernet::print(bool hex)
 		((unsigned char*)&this->type)[0], ((unsigned char*)&this->type)[1], this->type, protocolType
 	);
 
-	fmt::print(fmt::fg(fmt::color::green_yellow), "Data\n");
-	data.print(16, hex);
-	fmt::print("\n\n");
+	fmt::print(fmt::emphasis::bold | fmt::fg(fmt::color::green_yellow), "Data\n");
+	fmt::print("{0:s}\n\n", data.getString(16, hex, true));
 }
 
 void Ethernet::randomize(uint16_t min, uint16_t max)
@@ -80,9 +78,7 @@ std::string Ethernet::getType(void)
 void Ethernet::appendInfo(WindowMain* windowMain)
 {
 	// Destination address
-	std::string strDestinationAddress;
-	strDestinationAddress += dst.getString();
-	wxStaticText* destinationAddress = new wxStaticText(windowMain->panel, wxID_ANY, strDestinationAddress);
+	wxStaticText* destinationAddress = new wxStaticText(windowMain->panel, wxID_ANY, dst.getString());
 	destinationAddress->SetForegroundColour(wxColour(255, 0, 0));
 	windowMain->sizerPanel->Add(destinationAddress, 0, wxALIGN_CENTER_HORIZONTAL, 0);
 

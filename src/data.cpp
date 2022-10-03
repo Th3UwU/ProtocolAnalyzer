@@ -2,7 +2,6 @@
 
 #include <fmt/core.h>
 #include <fmt/color.h>
-#include <cstdlib>
 
 Data::Data(void)
 {
@@ -15,28 +14,44 @@ Data::~Data(void)
 	operator delete(this->raw);
 }
 
-void Data::print(unsigned short line_length, bool hex)
+std::string Data::getString(unsigned short line_length, bool hex, bool color)
 {
+	std::string str;
 	unsigned short l = 0;
 
 	for (unsigned short i = 0; i < length; i++)
 	{
-		if (hex)
+		if (color)
 		{
-			fmt::print(fmt::fg(fmt::color::light_pink), "{0:02X} ", this->raw[i]);
+			if (hex)
+				str += fmt::format(fmt::fg(fmt::color::light_pink), "{0:02X} ", this->raw[i]);
+			else
+			{
+				if ((this->raw[i] >= 32) and (this->raw[i] <= 126))
+					str += fmt::format(fmt::fg(fmt::color::light_pink), "{0:c} ", this->raw[i]);
+				else
+					str += fmt::format(fmt::fg(fmt::color::light_pink), ". ");
+			}
 		}
 		else
 		{
-			if ((this->raw[i] >= 32) and (this->raw[i] <= 126))
-				fmt::print(fmt::fg(fmt::color::light_pink), "{0:c} ", this->raw[i]);
+			if (hex)
+				str += fmt::format("{0:02X} ", this->raw[i]);
 			else
-				fmt::print(fmt::fg(fmt::color::light_pink), ". ");
+			{
+				if ((this->raw[i] >= 32) and (this->raw[i] <= 126))
+					str += fmt::format("{0:c} ", this->raw[i]);
+				else
+					str += fmt::format(". ");
+			}
 		}
 
 		l++;
 		if ((l == line_length) and (i < length - 1))
-			{fmt::print("\n"); l = 0;}
+			{str += fmt::format("\n"); l = 0;}
 	}
+
+	return str;
 }
 
 void Data::randomize(unsigned short min, unsigned short max)
