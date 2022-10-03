@@ -1,5 +1,8 @@
 #include "packet.hpp"
+#include "gui/window_main.hpp"
 
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <fmt/core.h>
 #include <fmt/color.h>
 
@@ -12,11 +15,11 @@ Ethernet::Ethernet(void)
 void Ethernet::print(bool hex)
 {
 	fmt::print(fmt::fg(fmt::color::green_yellow), "Destination Address\n");
-	dst.print();
+	fmt::print(dst.getString(true));
 	fmt::print("\n\n");
 
 	fmt::print(fmt::fg(fmt::color::green_yellow), "Source Address\n");
-	src.print();
+	fmt::print(src.getString(true));
 	fmt::print("\n\n");
 
 	fmt::print(fmt::fg(fmt::color::green_yellow), "Type\n");
@@ -72,4 +75,21 @@ unsigned int Ethernet::getSize(void)
 std::string Ethernet::getType(void)
 {
 	return std::string("Ethernet");
+}
+
+void Ethernet::appendInfo(WindowMain* windowMain)
+{
+	// Destination address
+	std::string strDestinationAddress;
+	strDestinationAddress += dst.getString();
+	wxStaticText* destinationAddress = new wxStaticText(windowMain->panel, wxID_ANY, strDestinationAddress);
+	destinationAddress->SetForegroundColour(wxColour(255, 0, 0));
+	windowMain->sizerPanel->Add(destinationAddress, 0, wxALIGN_CENTER_HORIZONTAL, 0);
+
+	windowMain->sizerPanel->Layout();
+	/*
+	fmt::print(fmt::fg(fmt::color::green_yellow), "Destination Address\n");
+	dst.print();
+	fmt::print("\n\n");
+	*/
 }

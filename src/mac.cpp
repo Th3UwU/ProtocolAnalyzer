@@ -8,11 +8,24 @@ Mac::Mac(void)
 	memset(this->address, 0, 6);
 }
 
-void Mac::print(void)
+std::string Mac::getString(bool color)
 {
-	for (uint8_t i = 0; i < 5; i++)
-		fmt::print(fmt::fg(fmt::color::salmon), "{0:02X}:", this->address[i]);
-	fmt::print(fmt::fg(fmt::color::salmon), "{0:02X}", this->address[5]);
+	std::string str;
+
+	if (color)
+	{
+		for (uint8_t i = 0; i < 5; i++)
+			str += fmt::format(fmt::fg(fmt::color::salmon), "{0:02X}:", this->address[i]);
+		str += fmt::format(fmt::fg(fmt::color::salmon), "{0:02X}", this->address[5]);
+	}
+	else
+	{
+		for (uint8_t i = 0; i < 5; i++)
+			str += fmt::format("{0:02X}:", this->address[i]);
+		str += fmt::format("{0:02X}", this->address[5]);
+	}
+
+	return str;
 }
 
 void Mac::randomize(void)

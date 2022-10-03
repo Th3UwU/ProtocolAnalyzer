@@ -3,14 +3,6 @@
 
 #include "gui/window_main.hpp"
 
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-
-enum
-{
-	ID_SELECTED_ROW = 1
-};
-
 Table::Table(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style, const wxString &name)
 : wxGrid(parent, id, pos, size, style, name)
 {
@@ -46,9 +38,14 @@ void Table::OnSelectedRow(wxGridEvent& event)
 	// Clear widgets
 	parent->sizerPanel->Clear(false);
 	parent->panel->DestroyChildren();
+	
+	// Add data
+	parent->items[event.GetRow()]->appendInfo(parent);
 
+	/*
 	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"Hola!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
 	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"Como!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
 	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"estas!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
 	parent->sizerPanel->Layout();
+	*/
 }

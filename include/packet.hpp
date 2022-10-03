@@ -6,6 +6,8 @@
 
 #include <string>
 
+class WindowMain;
+
 struct Packet
 {
 	Packet(void) = default;
@@ -16,6 +18,7 @@ struct Packet
 	virtual void loadFromFile(const char* path) = 0;
 	virtual unsigned int getSize(void) = 0;
 	virtual std::string getType(void) = 0;
+	virtual void appendInfo(WindowMain* windowMain) = 0;
 };
 
 struct Ethernet : public Packet
@@ -28,6 +31,7 @@ struct Ethernet : public Packet
 	virtual void loadFromFile(const char* path) override;
 	virtual unsigned int getSize(void) override;
 	virtual std::string getType(void) override;
+	virtual void appendInfo(WindowMain* windowMain) override;
 
 	Mac dst;
 	Mac src;
