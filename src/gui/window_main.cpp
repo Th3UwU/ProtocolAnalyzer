@@ -39,12 +39,12 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	SetStatusText("Welcome to wxWidgets!");
 
 	//
-	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	sizerPanel = new wxBoxSizer(wxVERTICAL);
-	panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(900, 200));
-	panel->SetBackgroundColour(wxColour(100, 200, 100));
-	table = new Table(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	panel->SetBackgroundColour(*wxBLACK);
+	table = new Table(this, wxID_ANY, wxDefaultPosition, wxSize(300, 200));
 	table->CreateGrid(0, 3);
 	table->SetUseNativeColLabels(true);
 	table->EnableEditing(false);
@@ -58,7 +58,7 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 
 	panel->SetSizer(sizerPanel);
 	sizer->Add(table, 1, wxEXPAND | wxALL, 0);
-	sizer->Add(panel, 1, wxEXPAND | wxALL, 0);
+	sizer->Add(panel, 3, wxEXPAND | wxALL, 0);
 	this->SetSizerAndFit(sizer);
 
 	// Bind

@@ -3,6 +3,7 @@
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/font.h>
 #include <fmt/core.h>
 #include <fmt/color.h>
 
@@ -77,15 +78,74 @@ std::string Ethernet::getType(void)
 
 void Ethernet::appendInfo(WindowMain* windowMain)
 {
-	// Destination address
-	wxStaticText* destinationAddress = new wxStaticText(windowMain->panel, wxID_ANY, dst.getString());
-	destinationAddress->SetForegroundColour(wxColour(255, 0, 0));
-	windowMain->sizerPanel->Add(destinationAddress, 0, wxALIGN_CENTER_HORIZONTAL, 0);
+	wxFont font(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+	font.SetFaceName(wxString("Consolas"));
 
+	// Destination address
+	wxStaticText* destAddLabel = new wxStaticText(windowMain->panel, wxID_ANY, L"Dirección destino: ");
+	destAddLabel->SetForegroundColour(wxColour(173, 255, 47));
+	destAddLabel->SetFont(font.Bold());
+
+	wxStaticText* destAddInfo = new wxStaticText(windowMain->panel, wxID_ANY, dst.getString());
+	destAddInfo->SetForegroundColour(wxColour(250, 128, 114));
+	destAddInfo->SetFont(font);
+
+	wxBoxSizer* destAddBox = new wxBoxSizer(wxHORIZONTAL);
+	destAddBox->Add(destAddLabel);
+	destAddBox->Add(destAddInfo);
+	windowMain->sizerPanel->Add(destAddBox, 0, wxALIGN_CENTER_HORIZONTAL, 0);
+
+	// Destination address
+	wxStaticText* srcAddLabel = new wxStaticText(windowMain->panel, wxID_ANY, L"Dirección fuente: ");
+	srcAddLabel->SetForegroundColour(wxColour(173, 255, 47));
+	srcAddLabel->SetFont(font.Bold());
+
+	wxStaticText* srcAddInfo = new wxStaticText(windowMain->panel, wxID_ANY, src.getString());
+	srcAddInfo->SetForegroundColour(wxColour(250, 128, 114));
+	srcAddInfo->SetFont(font);
+
+	wxBoxSizer* srcAddBox = new wxBoxSizer(wxHORIZONTAL);
+	srcAddBox->Add(srcAddLabel);
+	srcAddBox->Add(srcAddInfo);
+	windowMain->sizerPanel->Add(srcAddBox, 0, wxALIGN_CENTER_HORIZONTAL, 0);
+
+	// Type
+	std::string protocolType;
+	wxColour color(127, 255, 212);
+
+	switch (this->type)
+	{
+		case 8: protocolType = "IPV4"; break;
+		default: protocolType = "Desconocido"; color.Set(255, 0, 0); break;
+	}
+
+	wxStaticText* typeLabel = new wxStaticText(windowMain->panel, wxID_ANY, L"Tipo de protocolo: ");
+	typeLabel->SetForegroundColour(wxColour(173, 255, 47));
+	typeLabel->SetFont(font.Bold());
+
+	wxStaticText* typeInfo = new wxStaticText(windowMain->panel, wxID_ANY, protocolType);
+	typeInfo->SetForegroundColour(color);
+	typeInfo->SetFont(font);
+	
+	wxBoxSizer* typeBox = new wxBoxSizer(wxHORIZONTAL);
+	typeBox->Add(typeLabel);
+	typeBox->Add(typeInfo);
+	windowMain->sizerPanel->Add(typeBox, 0, wxALIGN_CENTER_HORIZONTAL, 0);
+
+	// Data
+	wxStaticText* dataLabel = new wxStaticText(windowMain->panel, wxID_ANY, L"Datos (RAW): ");
+	dataLabel->SetForegroundColour(wxColour(173, 255, 47));
+	dataLabel->SetFont(font.Bold());
+
+	wxStaticText* dataInfo = new wxStaticText(windowMain->panel, wxID_ANY, data.getString(16, true));
+	dataInfo->SetForegroundColour(wxColour(250, 128, 114));
+	dataInfo->SetFont(font);
+
+	wxBoxSizer* dataBox = new wxBoxSizer(wxVERTICAL);
+	dataBox->Add(dataLabel);
+	dataBox->Add(dataInfo);
+	windowMain->sizerPanel->Add(dataBox, 0, wxALIGN_CENTER_HORIZONTAL, 0);
+	
+	//
 	windowMain->sizerPanel->Layout();
-	/*
-	fmt::print(fmt::fg(fmt::color::green_yellow), "Destination Address\n");
-	dst.print();
-	fmt::print("\n\n");
-	*/
 }
