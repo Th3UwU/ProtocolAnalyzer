@@ -12,8 +12,10 @@ public:
 
 	void OnSize(wxSizeEvent& event);
 	void OnSelectedRow(wxGridEvent& event);
+	void OnRightClickedRow(wxGridEvent& event);
 
 	std::array<unsigned int, 3> columnSize;
+	int selectedRow;
 };
 
 #endif

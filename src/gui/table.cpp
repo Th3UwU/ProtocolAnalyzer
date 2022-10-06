@@ -1,16 +1,33 @@
 #include "gui/table.hpp"
+
+#include <wx/menu.h>
 #include <fmt/core.h>
 
 #include "gui/window_main.hpp"
+
+enum
+{
+	ID_Remove_Item = 1
+};
 
 Table::Table(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style, const wxString &name)
 : wxGrid(parent, id, pos, size, style, name)
 {
 	// Column size
 	columnSize = {1, 1, 2};
+	selectedRow = -1;
 
 	Bind(wxEVT_SIZE, &Table::OnSize, this);
 	Bind(wxEVT_GRID_SELECT_CELL, &Table::OnSelectedRow, this);
+	Bind(wxEVT_GRID_CELL_RIGHT_CLICK, &Table::OnRightClickedRow, this);
+
+	Bind(wxEVT_MENU,
+	[&, this](wxCommandEvent& event)
+	{
+		WindowMain* parent = (WindowMain*)GetParent();
+		parent->removeItem(selectedRow);
+	},
+	ID_Remove_Item);
 }
 
 void Table::OnSize(wxSizeEvent& event)
@@ -41,11 +58,14 @@ void Table::OnSelectedRow(wxGridEvent& event)
 	
 	// Add data
 	parent->items[event.GetRow()]->appendInfo(parent);
+}
 
-	/*
-	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"Hola!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
-	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"Como!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
-	parent->sizerPanel->Add(new wxStaticText(parent->panel, wxID_ANY, L"estas!!"), 0, wxALIGN_CENTER_HORIZONTAL, 0);
-	parent->sizerPanel->Layout();
-	*/
+void Table::OnRightClickedRow(wxGridEvent& event)
+{
+	SelectRow(event.GetRow());
+	selectedRow = event.GetRow();
+
+	wxMenu* menu = new wxMenu();
+	menu->Append(ID_Remove_Item, L"Eliminar");
+	PopupMenu(menu);
 }

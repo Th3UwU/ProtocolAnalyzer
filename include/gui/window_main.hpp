@@ -21,6 +21,7 @@ public:
 
 	void refreshItems(void);
 	void appendItem(const std::shared_ptr<Packet>& packet);
+	void removeItem(const int row);
 
 	Table* table;
 	std::vector<std::shared_ptr<Packet>> items;

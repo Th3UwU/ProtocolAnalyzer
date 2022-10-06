@@ -67,6 +67,7 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	Bind(wxEVT_MENU, &WindowMain::OnAbout, this, wxID_ABOUT);
 	Bind(wxEVT_MENU, &WindowMain::OnExit, this, wxID_EXIT);
 	Bind(wxEVT_SIZE, &WindowMain::OnSize, this);
+	Bind(wxEVT_SIZE, &WindowMain::OnSize, this);
 }
 
 void WindowMain::OnExit(wxCommandEvent& event)
@@ -117,4 +118,20 @@ void WindowMain::appendItem(const std::shared_ptr<Packet>& packet)
 	table->SetCellValue(index, 0, fmt::format("{0:d}", index));
 	table->SetCellValue(index, 1, fmt::format("{0:d}", packet->getSize()));
 	table->SetCellValue(index, 2, packet->getType());
+}
+
+void WindowMain::removeItem(const int row)
+{
+	items.erase(items.begin() + row);
+	table->DeleteRows(row);
+
+	// Clear widgets
+	sizerPanel->Clear(false);
+	panel->DestroyChildren();
+
+	// Update id's
+	for (int i = 0; i < table->GetNumberRows(); i++)
+		table->SetCellValue(i, 0, fmt::format("{0:d}", i));
+
+	//refreshItems();
 }
