@@ -6,6 +6,7 @@
 
 #include <wx/frame.h>
 #include <wx/sizer.h>
+#include <wx/scrolwin.h>
 #include <vector>
 #include <memory>
 
@@ -27,7 +28,7 @@ public:
 	std::vector<std::shared_ptr<Packet>> items;
 
 	wxBoxSizer* sizerPanel;
-	wxPanel* panel;
+	wxScrolled<wxPanel>* panel;
 };
 
 #endif

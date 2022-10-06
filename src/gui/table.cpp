@@ -58,6 +58,8 @@ void Table::OnSelectedRow(wxGridEvent& event)
 	
 	// Add data
 	parent->items[event.GetRow()]->appendInfo(parent);
+
+	parent->panel->FitInside();
 }
 
 void Table::OnRightClickedRow(wxGridEvent& event)

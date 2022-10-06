@@ -42,8 +42,12 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	sizerPanel = new wxBoxSizer(wxVERTICAL);
-	panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	panel = new wxScrolled<wxPanel>(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	panel->SetBackgroundColour(*wxBLACK);
+	panel->ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_DEFAULT);
+	panel->EnableScrolling(true, true);
+	panel->SetScrollRate(5, 10);
+	//panel->SetVirtualSize(wxSize(1000, 2000));
 	table = new Table(this, wxID_ANY, wxDefaultPosition, wxSize(300, 200));
 	table->CreateGrid(0, 3);
 	table->SetUseNativeColLabels(true);
@@ -56,8 +60,8 @@ wxFrame(nullptr, wxID_ANY, L"Hello World", wxDefaultPosition, wxDefaultSize)
 	table->SetColLabelValue(1, L"Tamaño");
 	table->SetColLabelValue(2, L"Protocolo");
 
-	panel->SetSizer(sizerPanel);
-	sizer->Add(table, 1, wxEXPAND | wxALL, 0);
+	panel->SetSizerAndFit(sizerPanel);
+	sizer->Add(table, 0, wxEXPAND | wxVERTICAL, 0);
 	sizer->Add(panel, 3, wxEXPAND | wxALL, 0);
 	this->SetSizerAndFit(sizer);
 
@@ -132,6 +136,8 @@ void WindowMain::removeItem(const int row)
 	// Update id's
 	for (int i = 0; i < table->GetNumberRows(); i++)
 		table->SetCellValue(i, 0, fmt::format("{0:d}", i));
+
+	panel->FitInside();
 
 	//refreshItems();
 }
