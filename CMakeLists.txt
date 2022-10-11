@@ -20,9 +20,18 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(
 	${PROJECT_NAME} PRIVATE
 	"./include"
+	"./include_lib"
+)
+
+target_link_directories(
+	${PROJECT_NAME} PRIVATE
+	"./lib"
 )
 
 target_link_libraries(${PROJECT_NAME}
-	wxbase32u
-	wxmsw32u_core
-	fmt)
+	fmt
+	Pcap++ Packet++ Common++ Packet pthread ws2_32 iphlpapi
+)
+
+#wxbase32u
+#wxmsw32u_core
