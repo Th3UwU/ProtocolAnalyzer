@@ -34,12 +34,15 @@ static bool readInt(int& n)
 static void readString(std::string& string)
 {
 	fmt::print(fmt::fg(fmt::color::hot_pink), "--> ");
+
+	fmt::print("\x1b[38;2;250;128;114m");
 	std::getline(std::cin, string);
+	fmt::print("\x1b[0m\n");
 }
 
 Sniffer::Sniffer(void)
 {
-	protocolType = Protocol::Default;
+	protocolType = pcpp::UnknownProtocol;
 	pcpp::Logger::getInstance().suppressLogs();
 }
 
@@ -60,7 +63,7 @@ void Sniffer::init(void)
 		switch (opc)
 		{
 			case 0: return;
-			case 1: protocolType = (Protocol)opc; protocolMenu(); break;
+			case 1: protocolType = pcpp::Ethernet; protocolMenu(); break;
 			default: fmt::print(fmt::fg(fmt::color::red), "Ingrese una opción valida!!\n\n"); break;
 		}
 			
@@ -73,8 +76,8 @@ void Sniffer::protocolMenu(void)
 
 	switch (protocolType)
 	{
-		case Protocol::Ethernet: protocolStr = "Ethernet"; break;
-		case Protocol::Default: protocolStr = "Default"; break;
+		case pcpp::Ethernet: protocolStr = "Ethernet"; break;
+		case pcpp::UnknownProtocol: protocolStr = "Default"; break;
 	}
 
 	//
@@ -127,14 +130,33 @@ void Sniffer::readMenu(void)
 
 		if (parsedPacket.isPacketOfType(pcpp::Ethernet))
 		{
-			std::string macSrc = parsedPacket.getLayerOfType<pcpp::EthLayer>()->getSourceMac().toString();
-			std::string macDst = parsedPacket.getLayerOfType<pcpp::EthLayer>()->getDestMac().toString();
+			pcpp::EthLayer* layer = parsedPacket.getLayerOfType<pcpp::EthLayer>();
 
+			// Source MAC address
+			std::string macSrc = layer->getSourceMac().toString();
 			fmt::print(fmt::fg(fmt::color::cyan), "Dirección MAC Fuente: ");
 			fmt::print(fmt::fg(fmt::color::green_yellow), "{0:s}\n", macSrc);
 
+			// Destination MAC address
+			std::string macDst = layer->getDestMac().toString();
 			fmt::print(fmt::fg(fmt::color::cyan), "Dirección MAC Destino: ");
 			fmt::print(fmt::fg(fmt::color::green_yellow), "{0:s}\n", macDst);
+			
+			// Type
+			fmt::color color = fmt::color::green_yellow;
+			std::string type;
+			switch (layer->getEthHeader()->etherType)
+			{
+				case 8: type = "IPv4"; break;
+				default: type = "Desconocido"; color = fmt::color::red; break;
+			}
+			fmt::print(fmt::fg(fmt::color::cyan), "Tipo: ");
+			fmt::print(fmt::fg(color), "{0:s}\n", type);
+
+			// Length
+			size_t length = layer->getDataLen();
+			fmt::print(fmt::fg(fmt::color::cyan), "Tamaño total: ");
+			fmt::print(fmt::fg(fmt::color::green_yellow), "{0:d}\n", length);
 		}
 	}
 

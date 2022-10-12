@@ -1,6 +1,8 @@
 #ifndef _SNIFFER_HPP
 #define _SNIFFER_HPP
 
+#include <pcpp/ProtocolType.h>
+
 class Sniffer
 {
 public:
@@ -11,11 +13,7 @@ public:
 	void protocolMenu(void);
 	void readMenu(void);
 
-	enum class Protocol : int
-	{
-		Default = 0,
-		Ethernet
-	}protocolType;
+	pcpp::ProtocolType protocolType;
 };
 
 #endif
