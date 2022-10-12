@@ -30,7 +30,7 @@ target_link_directories(
 
 target_link_libraries(${PROJECT_NAME}
 	fmt
-	Pcap++ Packet++ Common++ Packet pthread ws2_32 iphlpapi
+	Pcap++ Packet++ Common++ wpcap Packet pthread ws2_32 iphlpapi
 )
 
 #wxbase32u
