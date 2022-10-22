@@ -76,7 +76,7 @@ std::string getProtocolString(pcpp::ProtocolType protocolType)
 		case pcpp::IPv6: protocolStr = "IPv6"; break;
 		case pcpp::TCP: protocolStr = "TCP"; break;
 		case pcpp::UDP: protocolStr = "UDP"; break;
-		case pcpp::UnknownProtocol: protocolStr = "Default"; break;
+		case pcpp::UnknownProtocol: protocolStr = "Desconocido"; break;
 	}
 
 	return protocolStr;

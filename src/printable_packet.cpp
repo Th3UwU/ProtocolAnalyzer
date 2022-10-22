@@ -26,13 +26,10 @@ std::string PpacketEthernet::toString(void)
 	
 	// Type
 	fmt::color color = fmt::color::green_yellow;
-	std::string type;
+	std::string type = getProtocolString(layer.getNextLayer()->getProtocol());
+	if (type == "Desconocido")
+		color = fmt::color::red;
 
-	switch (layer.getEthHeader()->etherType)
-	{
-		case 8: type = "IPv4"; break;
-		default: type = "Desconocido"; color = fmt::color::red; break;
-	}
 	string += fmt::format(fmt::fg(fmt::color::cyan), "Tipo: ");
 	string += fmt::format(fmt::fg(color), "{0:s}\n", type);
 

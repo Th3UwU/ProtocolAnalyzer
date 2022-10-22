@@ -99,17 +99,11 @@ void Sniffer::readMenu(void)
 		while (pPacket)
 		{
 			fmt::print(pPacket->toString());
+			for (int i = 0; i < 64; i++) fmt::print(fmt::fg(fmt::color::crimson), "-");
+			fmt::print("\n");
+
 			pPacket = pPacket->getNextLayer();
 		}
-
-
-
-
-		/*
-		PrintablePacket pPacket(parsedPacket);
-		* pPacket.print();
-		* fmt::print(pPacket.toString())
-		*/
 	}
 
 	reader->close();
