@@ -41,6 +41,55 @@ static void readString(std::string& string)
 	fmt::print("\x1b[0m\n");
 }
 
+static std::string getIPv4OptionName(pcpp::IPv4OptionTypes optionType)
+{
+	std::string optionName;
+
+	switch (optionType)
+	{
+		case pcpp::IPv4OptionTypes::IPV4OPT_EndOfOptionsList: optionName = "End of Option List"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_NOP: optionName = "No Operation"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_RecordRoute: optionName = "Record Route"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_MTUProbe: optionName = "MTU Probe"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_MTUReply: optionName = "MTU Reply"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_QuickStart: optionName = "Quick-Start"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_Timestamp: optionName = "Time Stamp"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_Traceroute: optionName = "Traceroute"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_Security: optionName = "Security (RIPSO)"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_LooseSourceRoute: optionName = "Loose Source Route"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_ExtendedSecurity: optionName = "E-Extended Security (RIPSO)"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_CommercialSecurity: optionName = "Commercial IP Security Option"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_StreamID: optionName = "Stream ID"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_StrictSourceRoute: optionName = "Strict Source Route"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_ExtendedInternetProtocol: optionName = "Extended Internet Protocol"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_AddressExtension: optionName = "Address Extension"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_RouterAlert: optionName = "Router Alert"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_SelectiveDirectedBroadcast: optionName = "Selective Directed Broadcast"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_DynamicPacketState: optionName = "Dynamic Packet State"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_UpstreamMulticastPkt: optionName = "Upstream Multicast Packet"; break;
+		case pcpp::IPv4OptionTypes::IPV4OPT_Unknown: optionName = "Unknown"; break;
+	}
+
+	return optionName;
+}
+
+static std::string getProtocolString(pcpp::ProtocolType protocolType)
+{
+	std::string protocolStr;
+
+	switch (protocolType)
+	{
+		case pcpp::Ethernet: protocolStr = "Ethernet"; break;
+		case pcpp::IPv4: protocolStr = "IPv4"; break;
+		case pcpp::IPv6: protocolStr = "IPv6"; break;
+		case pcpp::TCP: protocolStr = "TCP"; break;
+		case pcpp::UDP: protocolStr = "UDP"; break;
+		case pcpp::UnknownProtocol: protocolStr = "Default"; break;
+	}
+
+	return protocolStr;
+}
+
 Sniffer::Sniffer(void)
 {
 	protocolType = pcpp::UnknownProtocol;
@@ -73,13 +122,7 @@ void Sniffer::init(void)
 
 void Sniffer::protocolMenu(void)
 {
-	std::string protocolStr;
-
-	switch (protocolType)
-	{
-		case pcpp::Ethernet: protocolStr = "Ethernet"; break;
-		case pcpp::UnknownProtocol: protocolStr = "Default"; break;
-	}
+	std::string protocolStr = getProtocolString(protocolType);
 
 	//
 	int opc = -1;
@@ -119,7 +162,7 @@ void Sniffer::readMenu(void)
 
 	if (!reader->open())
 	{
-		fmt::print(fmt::fg(fmt::color::red), "Archivo no encontrado!!\n\n");
+		fmt::print(fmt::fg(fmt::color::red), "Error al leer el archivo!!\n\n");
 		return;
 	}
 
@@ -131,7 +174,7 @@ void Sniffer::readMenu(void)
 
 		if (parsedPacket.isPacketOfType(pcpp::Ethernet))
 		{
-			printPacketEth(parsedPacket.getLayerOfType<pcpp::EthLayer>());
+			printPacketEthernet(parsedPacket.getLayerOfType<pcpp::EthLayer>());
 
 			if (parsedPacket.isPacketOfType(pcpp::IPv4))
 				printPacketIpv4(parsedPacket.getLayerOfType<pcpp::IPv4Layer>());
@@ -146,7 +189,7 @@ void Sniffer::readMenu(void)
 	reader->close();
 }
 
-void Sniffer::printPacketEth(pcpp::EthLayer* layer)
+void Sniffer::printPacketEthernet(pcpp::EthLayer* layer)
 {
 	// Source MAC address
 	std::string macSrc = layer->getSourceMac().toString();
@@ -180,68 +223,83 @@ void Sniffer::printPacketIpv4(pcpp::IPv4Layer* layer)
 {
 	// IHL
 	uint8_t ihl = layer->getIPv4Header()->internetHeaderLength;
-	fmt::print("IHL: ");
-	fmt::print("{0:d}\n", ihl);
+	fmt::print(fmt::fg(fmt::color::light_pink), "IHL: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:d}\n", ihl);
 
 	// TOS
 	uint8_t tos = layer->getIPv4Header()->typeOfService;
-	fmt::print("TOS: ");
-	fmt::print("{0:d}\n", tos);
+	fmt::print(fmt::fg(fmt::color::light_pink), "TOS: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:d}\n", tos);
 
 	// LEN
 	uint16_t totalLength = ntohs(layer->getIPv4Header()->totalLength);
-	fmt::print("Tamaño total: ");
-	fmt::print("{0:d}\n", totalLength);
+	fmt::print(fmt::fg(fmt::color::light_pink), "Tamaño total: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:d}\n", totalLength);
 
 	// ID
 	uint16_t id = ntohs(layer->getIPv4Header()->ipId);
-	fmt::print("Identificación: ");
-	fmt::print("{0:d}\n", id);
+	fmt::print(fmt::fg(fmt::color::light_pink), "Identificación: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:d}\n", id);
 
 	// Flags
 	uint8_t flags = layer->getFragmentFlags();
-	fmt::print("Flags: ");
+	fmt::print(fmt::fg(fmt::color::light_pink), "Flags: ");
 
 	/* [1][2][3][ ][ ][ ][ ][ ] -> [ ][ ][ ][ ][ ][1][2][3] */  
 	/* Extraer los primeros 3 bits del byte */
 	flags >>= 5;
 	
-	fmt::print("{:c}{:c}{:c}",
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{:c}{:c}{:c}",
 	flags & 0x04 ? '1':'0',
 	flags & 0x02 ? '1':'0',
 	flags & 0x01 ? '1':'0');
 	
-	fmt::print(" ({0:#x})\n", flags);
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), " ({0:#x})\n", flags);
 
 	// Fragment offset
 	uint16_t fragmentOffset = layer->getFragmentOffset();
-	fmt::print("Fragment offset: ");
-	fmt::print("{0:d}\n", fragmentOffset);
+	fmt::print(fmt::fg(fmt::color::light_pink), "Fragment offset: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:d}\n", fragmentOffset);
 
 	// TTL
 	uint8_t ttl = layer->getIPv4Header()->timeToLive;
-	fmt::print("Tiempo de vida: ");
-	fmt::print("{0:d}\n", ttl);
+	fmt::print(fmt::fg(fmt::color::light_pink), "Tiempo de vida: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:d}\n", ttl);
 
 	// Protocol
 	uint8_t protocol = layer->getIPv4Header()->protocol;
-	fmt::print("Protocolo: ");
-	fmt::print("{0:d}\n", protocol);
+	std::string protocolString = getProtocolString(layer->getNextLayer()->getProtocol());
+	fmt::print(fmt::fg(fmt::color::light_pink), "Protocolo: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:s} ({1:d})\n", protocolString, protocol);
 
 	// Checksum
 	uint16_t checksum = ntohs(layer->getIPv4Header()->headerChecksum);
-	fmt::print("Checksum: ");
-	fmt::print("{0:d}\n", checksum);
+	fmt::print(fmt::fg(fmt::color::light_pink), "Checksum: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:d}\n", checksum);
 
 	// Source IP address
 	std::string IPSrc = layer->getSrcIPv4Address().toString();
-	fmt::print("Dirección IP Fuente: ");
-	fmt::print("{0:s}\n", IPSrc);
+	fmt::print(fmt::fg(fmt::color::light_pink), "Dirección IP Fuente: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:s}\n", IPSrc);
 
 	// Destination IP address
 	std::string IPDst = layer->getDstIPv4Address().toString();
-	fmt::print("Dirección IP Destino: ");
-	fmt::print("{0:s}\n", IPDst	);
-
+	fmt::print(fmt::fg(fmt::color::light_pink), "Dirección IP Destino: ");
+	fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:s}\n", IPDst	);
+	
 	// Options
+	bool even = false;
+
+	fmt::print(fmt::fg(fmt::color::light_pink), "Opciones:\n");
+	for (pcpp::IPv4Option option = layer->getFirstOption();
+	(option.getIPv4OptionType() != pcpp::IPV4OPT_EndOfOptionsList) and (option.getIPv4OptionType() != pcpp::IPV4OPT_Unknown);
+	option = layer->getNextOption(option))
+	{
+		even = true;
+		std::string optionString = getIPv4OptionName(option.getIPv4OptionType());
+		fmt::print(fmt::fg(fmt::color::cornflower_blue), "{0:s}\n", optionString);
+	}
+
+	if (!even)
+		fmt::print(fmt::fg(fmt::color::cornflower_blue), "Ninguna\n");
 }

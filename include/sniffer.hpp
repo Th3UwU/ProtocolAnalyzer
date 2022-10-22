@@ -15,7 +15,7 @@ public:
 	void protocolMenu(void);
 	void readMenu(void);
 
-	void printPacketEth(pcpp::EthLayer* layer);
+	void printPacketEthernet(pcpp::EthLayer* layer);
 	void printPacketIpv4(pcpp::IPv4Layer* layer);
 
 	pcpp::ProtocolType protocolType;
