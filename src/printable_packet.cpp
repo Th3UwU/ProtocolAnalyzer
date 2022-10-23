@@ -118,7 +118,7 @@ std::string PpacketIPv4::toString(void)
 	// Destination IP address
 	std::string IPDst = layer.getDstIPv4Address().toString();
 	string += fmt::format(fmt::fg(fmt::color::light_pink), "Dirección IP Destino: ");
-	string += fmt::format(fmt::fg(fmt::color::cornflower_blue), "{0:s}\n", IPDst	);
+	string += fmt::format(fmt::fg(fmt::color::cornflower_blue), "{0:s}\n", IPDst);
 	
 	// Options
 	bool even = false;
@@ -140,6 +140,58 @@ std::string PpacketIPv4::toString(void)
 }
 
 std::unique_ptr<PrintablePacket> PpacketIPv4::getNextLayer(void)
+{
+	return nullptr;
+}
+
+PpacketARP::PpacketARP(pcpp::ArpLayer& layer)
+: layer(layer)
+{}
+
+std::string PpacketARP::toString(void)
+{
+	std::string string;
+
+	// Hardware type
+	string += fmt::format(fmt::fg(fmt::color::orange), "Hardware type: ");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->hardwareType);
+
+	// Protocol type
+	string += fmt::format(fmt::fg(fmt::color::orange), "Protocol type: ");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->protocolType);
+
+	// Hardware size
+	string += fmt::format(fmt::fg(fmt::color::orange), "Hardware size: ");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->hardwareSize);
+
+	// Protocol size
+	string += fmt::format(fmt::fg(fmt::color::orange), "Protocol size: ");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->protocolSize);
+
+	// Operation code
+	string += fmt::format(fmt::fg(fmt::color::orange), "Operation code");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->opcode);
+
+	// Source MAC
+	string += fmt::format(fmt::fg(fmt::color::orange), "Source MAC");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->senderMacAddr);
+
+	// Source protocol address
+	string += fmt::format(fmt::fg(fmt::color::orange), "Source protocol address");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->senderIpAddr);
+
+	// Target MAC
+	string += fmt::format(fmt::fg(fmt::color::orange), "Target MAC");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->targetMacAddr);
+
+	// Target protocol address
+	string += fmt::format(fmt::fg(fmt::color::orange), "Target protocol address");
+	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->targetIpAddr);
+
+	return string;
+}
+
+std::unique_ptr<PrintablePacket> PpacketARP::getNextLayer(void)
 {
 	return nullptr;
 }

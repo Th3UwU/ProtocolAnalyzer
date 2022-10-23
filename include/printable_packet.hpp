@@ -5,6 +5,7 @@
 #include <pcpp/EthLayer.h>
 #include <pcpp/IPv4Layer.h>
 #include <pcpp/IPv6Layer.h>
+#include <pcpp/ArpLayer.h>
 #include <string>
 #include <memory>
 
@@ -40,6 +41,18 @@ public:
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
 
 	pcpp::IPv4Layer& layer;
+};
+
+class PpacketARP : public PrintablePacket
+{
+public:
+	PpacketARP(pcpp::ArpLayer& layer);
+	virtual ~PpacketARP(void) = default;
+
+	virtual std::string toString(void) override;
+	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+
+	pcpp::ArpLayer& layer;
 };
 
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer);
