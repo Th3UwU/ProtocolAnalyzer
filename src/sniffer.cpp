@@ -26,6 +26,8 @@ void Sniffer::init(void)
 	{
 		fmt::print(fmt::fg(fmt::color::aquamarine), "Elija el tipo de protocolo que desea analizar\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "1- Ethernet\n");
+		fmt::print(fmt::fg(fmt::color::crimson), "2- IPv4\n");
+		fmt::print(fmt::fg(fmt::color::crimson), "3- ARP\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "0- Salir\n");
 
 		if (not readInt(opc))
@@ -36,6 +38,8 @@ void Sniffer::init(void)
 		{
 			case 0: return;
 			case 1: protocolType = pcpp::Ethernet; protocolMenu(); break;
+			case 2: protocolType = pcpp::IPv4; protocolMenu(); break;
+			case 3: protocolType = pcpp::ARP; protocolMenu(); break;
 			default: fmt::print(fmt::fg(fmt::color::red), "Ingrese una opción valida!!\n\n"); break;
 		}
 			
@@ -93,17 +97,22 @@ void Sniffer::readMenu(void)
 	while (reader->getNextPacket(rawPacket))
 	{
 		pcpp::Packet parsedPacket(&rawPacket);
+		pcpp::Layer* layer = parsedPacket.getFirstLayer();
 
-		std::unique_ptr<PrintablePacket> pPacket = createPpacketFromLayer(*parsedPacket.getFirstLayer());
-
-		while (pPacket)
+		while (layer)
 		{
-			fmt::print(pPacket->toString());
-			for (int i = 0; i < 64; i++) fmt::print(fmt::fg(fmt::color::crimson), "-");
-			fmt::print("\n");
-
-			pPacket = pPacket->getNextLayer();
+			if (layer->getProtocol() == protocolType)
+			{
+				std::unique_ptr<PrintablePacket> pPacket = createPpacketFromLayer(*layer);
+				fmt::print(pPacket->toString());
+				for (int i = 0; i < 64; i++) fmt::print(fmt::fg(fmt::color::crimson), "-");
+				fmt::print("\n");
+				break;
+			}
+			else
+				layer = layer->getNextLayer();
 		}
+
 	}
 
 	reader->close();

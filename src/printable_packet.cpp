@@ -152,41 +152,45 @@ std::string PpacketARP::toString(void)
 {
 	std::string string;
 
+	// Tamaño de los datos
+	string += fmt::format(fmt::fg(fmt::color::orange), "Tamaño total: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getDataLen());
+
 	// Hardware type
 	string += fmt::format(fmt::fg(fmt::color::orange), "Hardware type: ");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->hardwareType);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", ntohs(layer.getArpHeader()->hardwareType));
 
 	// Protocol type
 	string += fmt::format(fmt::fg(fmt::color::orange), "Protocol type: ");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->protocolType);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getArpHeader()->protocolType);
 
 	// Hardware size
 	string += fmt::format(fmt::fg(fmt::color::orange), "Hardware size: ");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->hardwareSize);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getArpHeader()->hardwareSize);
 
 	// Protocol size
 	string += fmt::format(fmt::fg(fmt::color::orange), "Protocol size: ");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->protocolSize);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getArpHeader()->protocolSize);
 
 	// Operation code
-	string += fmt::format(fmt::fg(fmt::color::orange), "Operation code");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->opcode);
+	string += fmt::format(fmt::fg(fmt::color::orange), "Operation code: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", ntohs(layer.getArpHeader()->opcode));
 
 	// Source MAC
-	string += fmt::format(fmt::fg(fmt::color::orange), "Source MAC");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->senderMacAddr);
+	string += fmt::format(fmt::fg(fmt::color::orange), "Source MAC: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:s}\n", layer.getSenderMacAddress().toString());
 
 	// Source protocol address
-	string += fmt::format(fmt::fg(fmt::color::orange), "Source protocol address");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->senderIpAddr);
+	string += fmt::format(fmt::fg(fmt::color::orange), "Source protocol address: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:s}\n", layer.getSenderIpAddr().toString());
 
 	// Target MAC
-	string += fmt::format(fmt::fg(fmt::color::orange), "Target MAC");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->targetMacAddr);
+	string += fmt::format(fmt::fg(fmt::color::orange), "Target MAC: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:s}\n", layer.getTargetMacAddress().toString());
 
 	// Target protocol address
-	string += fmt::format(fmt::fg(fmt::color::orange), "Target protocol address");
-	string += fmt::format(fmt::fg(fmt::color::light_cyan), "{0:d}\n", layer.getArpHeader()->targetIpAddr);
+	string += fmt::format(fmt::fg(fmt::color::orange), "Target protocol address: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:s}\n", layer.getTargetIpAddr().toString());
 
 	return string;
 }
@@ -203,6 +207,9 @@ std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 	
 	if (layer.getProtocol() == pcpp::IPv4)
 		return std::make_unique<PpacketIPv4>((pcpp::IPv4Layer&)layer);
+
+	if (layer.getProtocol() == pcpp::ARP)
+		return std::make_unique<PpacketARP>((pcpp::ArpLayer&)layer);
 
 	return nullptr;
 }
