@@ -200,6 +200,46 @@ std::unique_ptr<PrintablePacket> PpacketARP::getNextLayer(void)
 	return nullptr;
 }
 
+std::string PpacketICMPv4::toString(void)
+{
+	std::string string;
+
+	// Tipo
+	string += fmt::format(fmt::fg(fmt::color::orange), "Type: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", int(layer.getMessageType()));
+
+	// Code
+	string += fmt::format(fmt::fg(fmt::color::orange), "Code: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getIcmpHeader()->code);
+	
+	// Checksum
+	string += fmt::format(fmt::fg(fmt::color::orange), "Checksum: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:#x}\n", htons(layer.getIcmpHeader()->checksum));
+
+	// Identifier
+	string += fmt::format(fmt::fg(fmt::color::orange), "Identifier (BE): ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} ({0:#06x})\n", htons(*(uint16_t*)(layer.getDataPtr() + 4)));
+	string += fmt::format(fmt::fg(fmt::color::orange), "Identifier (LE): ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} ({0:#06x})\n", *(uint16_t*)(layer.getDataPtr() + 4));
+
+	// Sequence Number
+	string += fmt::format(fmt::fg(fmt::color::orange), "Sequence Number (BE): ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} ({0:#06x})\n", htons(*(uint16_t*)(layer.getDataPtr() + 6)));
+	string += fmt::format(fmt::fg(fmt::color::orange), "Sequence Number (LE): ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} ({0:#06x})\n", *(uint16_t*)(layer.getDataPtr() + 6));
+
+	return string;
+}
+
+std::unique_ptr<PrintablePacket> PpacketICMPv4::getNextLayer(void)
+{
+	return nullptr;
+}
+
+PpacketICMPv4::PpacketICMPv4(pcpp::IcmpLayer& layer)
+: layer(layer)
+{}
+
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 {
 	if (layer.getProtocol() == pcpp::Ethernet)
@@ -210,6 +250,9 @@ std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 
 	if (layer.getProtocol() == pcpp::ARP)
 		return std::make_unique<PpacketARP>((pcpp::ArpLayer&)layer);
+
+	if (layer.getProtocol() == pcpp::ICMP)
+		return std::make_unique<PpacketICMPv4>((pcpp::IcmpLayer&)layer);
 
 	return nullptr;
 }

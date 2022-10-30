@@ -28,6 +28,7 @@ void Sniffer::init(void)
 		fmt::print(fmt::fg(fmt::color::crimson), "1- Ethernet\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "2- IPv4\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "3- ARP\n");
+		fmt::print(fmt::fg(fmt::color::crimson), "4- ICMP\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "0- Salir\n");
 
 		if (not readInt(opc))
@@ -40,6 +41,7 @@ void Sniffer::init(void)
 			case 1: protocolType = pcpp::Ethernet; protocolMenu(); break;
 			case 2: protocolType = pcpp::IPv4; protocolMenu(); break;
 			case 3: protocolType = pcpp::ARP; protocolMenu(); break;
+			case 4: protocolType = pcpp::ICMP; protocolMenu(); break;
 			default: fmt::print(fmt::fg(fmt::color::red), "Ingrese una opción valida!!\n\n"); break;
 		}
 			
