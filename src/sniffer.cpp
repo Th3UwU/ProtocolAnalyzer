@@ -29,6 +29,7 @@ void Sniffer::init(void)
 		fmt::print(fmt::fg(fmt::color::crimson), "2- IPv4\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "3- ARP\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "4- ICMP\n");
+		fmt::print(fmt::fg(fmt::color::crimson), "5- IPv6\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "0- Salir\n");
 
 		if (not readInt(opc))
@@ -42,6 +43,7 @@ void Sniffer::init(void)
 			case 2: protocolType = pcpp::IPv4; protocolMenu(); break;
 			case 3: protocolType = pcpp::ARP; protocolMenu(); break;
 			case 4: protocolType = pcpp::ICMP; protocolMenu(); break;
+			case 5: protocolType = pcpp::IPv6; protocolMenu(); break;
 			default: fmt::print(fmt::fg(fmt::color::red), "Ingrese una opción valida!!\n\n"); break;
 		}
 			
@@ -106,6 +108,15 @@ void Sniffer::readMenu(void)
 			if (layer->getProtocol() == protocolType)
 			{
 				std::unique_ptr<PrintablePacket> pPacket = createPpacketFromLayer(*layer);
+				fmt::print(pPacket->toString());
+				for (int i = 0; i < 64; i++) fmt::print(fmt::fg(fmt::color::crimson), "-");
+				fmt::print("\n");
+				break;
+			}
+			// Caso especial: es ICMPv6
+			else if ((layer->getProtocol() == pcpp::GenericPayload) and (protocolType == pcpp::ICMP))
+			{
+				std::unique_ptr<PrintablePacket> pPacket = std::make_unique<PpacketICMP>((pcpp::IcmpLayer&)(*layer));
 				fmt::print(pPacket->toString());
 				for (int i = 0; i < 64; i++) fmt::print(fmt::fg(fmt::color::crimson), "-");
 				fmt::print("\n");

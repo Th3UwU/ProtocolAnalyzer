@@ -200,13 +200,17 @@ std::unique_ptr<PrintablePacket> PpacketARP::getNextLayer(void)
 	return nullptr;
 }
 
-std::string PpacketICMPv4::toString(void)
+PpacketICMP::PpacketICMP(pcpp::IcmpLayer& layer)
+: layer(layer)
+{}
+
+std::string PpacketICMP::toString(void)
 {
 	std::string string;
 
 	// Tipo
 	string += fmt::format(fmt::fg(fmt::color::orange), "Type: ");
-	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", int(layer.getMessageType()));
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getIcmpHeader()->type);
 
 	// Code
 	string += fmt::format(fmt::fg(fmt::color::orange), "Code: ");
@@ -231,14 +235,59 @@ std::string PpacketICMPv4::toString(void)
 	return string;
 }
 
-std::unique_ptr<PrintablePacket> PpacketICMPv4::getNextLayer(void)
+std::unique_ptr<PrintablePacket> PpacketICMP::getNextLayer(void)
 {
 	return nullptr;
 }
 
-PpacketICMPv4::PpacketICMPv4(pcpp::IcmpLayer& layer)
+PpacketIPv6::PpacketIPv6(pcpp::IPv6Layer& layer)
 : layer(layer)
 {}
+
+std::string PpacketIPv6::toString(void)
+{
+	std::string string;
+
+	// Version
+	string += fmt::format(fmt::fg(fmt::color::orange), "Versión: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getIPv6Header()->ipVersion);
+
+	// Traffic class
+	string += fmt::format(fmt::fg(fmt::color::orange), "Traffic class: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getIPv6Header()->trafficClass);
+
+	// Flow label
+	string += fmt::format(fmt::fg(fmt::color::orange), "Flow label: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:08b} {1:08b} {2:08b} ({0:#04x}{1:02x}{2:02x})\n",
+	layer.getIPv6Header()->flowLabel[0], layer.getIPv6Header()->flowLabel[1], layer.getIPv6Header()->flowLabel[2]);
+
+	// Payload length
+	string += fmt::format(fmt::fg(fmt::color::orange), "Payload length: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getLayerPayloadSize());
+
+	// Next header
+	string += fmt::format(fmt::fg(fmt::color::orange), "Next header: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getIPv6Header()->nextHeader);
+
+	// Hop limit
+	string += fmt::format(fmt::fg(fmt::color::orange), "Hop limit: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getIPv6Header()->hopLimit);
+
+	// Source address
+	string += fmt::format(fmt::fg(fmt::color::orange), "Source address: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:s}\n", layer.getSrcIPv6Address().toString());
+
+	// Destination address
+	string += fmt::format(fmt::fg(fmt::color::orange), "Destination address: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:s}\n", layer.getDstIPv6Address().toString());
+
+	return string;
+}
+
+std::unique_ptr<PrintablePacket> PpacketIPv6::getNextLayer(void)
+{
+	return nullptr;
+}
 
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 {
@@ -252,7 +301,10 @@ std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 		return std::make_unique<PpacketARP>((pcpp::ArpLayer&)layer);
 
 	if (layer.getProtocol() == pcpp::ICMP)
-		return std::make_unique<PpacketICMPv4>((pcpp::IcmpLayer&)layer);
+		return std::make_unique<PpacketICMP>((pcpp::IcmpLayer&)layer);
+
+	if (layer.getProtocol() == pcpp::IPv6)
+		return std::make_unique<PpacketIPv6>((pcpp::IPv6Layer&)layer);
 
 	return nullptr;
 }
