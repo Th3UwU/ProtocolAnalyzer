@@ -289,6 +289,79 @@ std::unique_ptr<PrintablePacket> PpacketIPv6::getNextLayer(void)
 	return nullptr;
 }
 
+PpacketTCP::PpacketTCP(pcpp::TcpLayer& layer)
+: layer(layer)
+{}
+
+std::string PpacketTCP::toString(void)
+{
+	std::string string;
+
+	// Source port
+	string += fmt::format(fmt::fg(fmt::color::orange), "Source port: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getSrcPort());
+
+	// Destination port
+	string += fmt::format(fmt::fg(fmt::color::orange), "Destination port: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getDstPort());
+
+	// Sequence number
+	string += fmt::format(fmt::fg(fmt::color::orange), "Sequence number: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htonl(layer.getTcpHeader()->sequenceNumber));
+
+	// Acknowledgement number
+	string += fmt::format(fmt::fg(fmt::color::orange), "Acknowledgement number: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htonl(layer.getTcpHeader()->ackNumber));
+
+	// Data offset
+	string += fmt::format(fmt::fg(fmt::color::orange), "Data offset: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getTcpHeader()->dataOffset);
+
+	// Flags
+	string += fmt::format(fmt::fg(fmt::color::orange), "Flags:\n");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (Congestion window reduced)\n", layer.getTcpHeader()->cwrFlag);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (ECN-Echo)\n", layer.getTcpHeader()->eceFlag);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (Urgent)\n", layer.getTcpHeader()->urgFlag);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (Acknowledgment)\n", layer.getTcpHeader()->ackFlag);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (Push)\n", layer.getTcpHeader()->pshFlag);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (Reset)\n", layer.getTcpHeader()->rstFlag);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (Syn)\n", layer.getTcpHeader()->synFlag);
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} (Fin)\n", layer.getTcpHeader()->finFlag);
+
+	// Window
+	string += fmt::format(fmt::fg(fmt::color::orange), "Window: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getTcpHeader()->windowSize));
+
+	// Checksum
+	string += fmt::format(fmt::fg(fmt::color::orange), "Checksum: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getTcpHeader()->headerChecksum));
+
+	// Urgent pointer
+	string += fmt::format(fmt::fg(fmt::color::orange), "Urgent pointer: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getTcpHeader()->urgentPointer));
+
+	// Options
+	bool space = false;
+	string += fmt::format(fmt::fg(fmt::color::orange), "Options:\n");
+
+	pcpp::TcpOption option = layer.getFirstTcpOption();
+	while (option.getTcpOptionType() != pcpp::TCPOPT_Unknown)
+	{
+		space = true;
+		string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} ", (unsigned char)option.getTcpOptionType());
+		option = layer.getNextTcpOption(option);
+	}
+	if (space)
+		string += '\n';
+
+	return string;
+}
+
+std::unique_ptr<PrintablePacket> PpacketTCP::getNextLayer(void)
+{
+	return nullptr;
+}
+
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 {
 	if (layer.getProtocol() == pcpp::Ethernet)
@@ -305,6 +378,9 @@ std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 
 	if (layer.getProtocol() == pcpp::IPv6)
 		return std::make_unique<PpacketIPv6>((pcpp::IPv6Layer&)layer);
+
+	if (layer.getProtocol() == pcpp::TCP)
+		return std::make_unique<PpacketTCP>((pcpp::TcpLayer&)layer);
 
 	return nullptr;
 }

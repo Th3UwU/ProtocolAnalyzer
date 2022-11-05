@@ -30,6 +30,7 @@ void Sniffer::init(void)
 		fmt::print(fmt::fg(fmt::color::crimson), "3- ARP\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "4- ICMP\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "5- IPv6\n");
+		fmt::print(fmt::fg(fmt::color::crimson), "6- TCP\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "0- Salir\n");
 
 		if (not readInt(opc))
@@ -44,6 +45,7 @@ void Sniffer::init(void)
 			case 3: protocolType = pcpp::ARP; protocolMenu(); break;
 			case 4: protocolType = pcpp::ICMP; protocolMenu(); break;
 			case 5: protocolType = pcpp::IPv6; protocolMenu(); break;
+			case 6: protocolType = pcpp::TCP; protocolMenu(); break;
 			default: fmt::print(fmt::fg(fmt::color::red), "Ingrese una opción valida!!\n\n"); break;
 		}
 			
@@ -105,6 +107,7 @@ void Sniffer::readMenu(void)
 
 		while (layer)
 		{
+			//fmt::print("Type: {:d}", layer->getProtocol());
 			if (layer->getProtocol() == protocolType)
 			{
 				std::unique_ptr<PrintablePacket> pPacket = createPpacketFromLayer(*layer);

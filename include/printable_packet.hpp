@@ -7,6 +7,8 @@
 #include <pcpp/IPv6Layer.h>
 #include <pcpp/ArpLayer.h>
 #include <pcpp/IcmpLayer.h>
+#include <pcpp/TcpLayer.h>
+#include <pcpp/UdpLayer.h>
 #include <string>
 #include <memory>
 
@@ -78,6 +80,18 @@ public:
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
 
 	pcpp::IPv6Layer& layer;
+};
+
+class PpacketTCP : public PrintablePacket
+{
+public:
+	PpacketTCP(pcpp::TcpLayer& layer);
+	virtual ~PpacketTCP(void) = default;
+
+	virtual std::string toString(void) override;
+	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+
+	pcpp::TcpLayer& layer;
 };
 
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer);
