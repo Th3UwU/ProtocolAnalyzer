@@ -362,6 +362,39 @@ std::unique_ptr<PrintablePacket> PpacketTCP::getNextLayer(void)
 	return nullptr;
 }
 
+PpacketUDP::PpacketUDP(pcpp::UdpLayer& layer)
+: layer(layer)
+{}
+
+std::string PpacketUDP::toString(void)
+{
+	std::string string;
+
+	// Source port
+	string += fmt::format(fmt::fg(fmt::color::orange), "Source port: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getSrcPort());
+
+	// Destination port
+	string += fmt::format(fmt::fg(fmt::color::orange), "Destination port: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", layer.getDstPort());
+
+	// Length
+	string += fmt::format(fmt::fg(fmt::color::orange), "Length: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getUdpHeader()->length));
+
+	// Checksum
+	string += fmt::format(fmt::fg(fmt::color::orange), "Checksum: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getUdpHeader()->headerChecksum));
+
+	return string;
+
+}
+
+std::unique_ptr<PrintablePacket> PpacketUDP::getNextLayer(void)
+{
+	return nullptr;
+}
+
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 {
 	if (layer.getProtocol() == pcpp::Ethernet)
@@ -381,6 +414,9 @@ std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 
 	if (layer.getProtocol() == pcpp::TCP)
 		return std::make_unique<PpacketTCP>((pcpp::TcpLayer&)layer);
+
+	if (layer.getProtocol() == pcpp::UDP)
+		return std::make_unique<PpacketUDP>((pcpp::UdpLayer&)layer);
 
 	return nullptr;
 }

@@ -94,6 +94,18 @@ public:
 	pcpp::TcpLayer& layer;
 };
 
+class PpacketUDP : public PrintablePacket
+{
+public:
+	PpacketUDP(pcpp::UdpLayer& layer);
+	virtual ~PpacketUDP(void) = default;
+
+	virtual std::string toString(void) override;
+	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+
+	pcpp::UdpLayer& layer;
+};
+
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer);
 
 #endif
