@@ -395,6 +395,116 @@ std::unique_ptr<PrintablePacket> PpacketUDP::getNextLayer(void)
 	return nullptr;
 }
 
+PpacketDNS::PpacketDNS(pcpp::DnsLayer& layer)
+: layer(layer)
+{}
+
+std::string PpacketDNS::toString(void)
+{
+	std::string string;
+
+	// Transaction ID
+	string += fmt::format(fmt::fg(fmt::color::orange), "Transaction ID: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} ({0:#x})\n", htons(layer.getDnsHeader()->transactionID));
+
+	// Flags
+	string += fmt::format(fmt::fg(fmt::color::orange), "FLAGS:\n\n");
+
+	// Questions
+	string += fmt::format(fmt::fg(fmt::color::orange), "Questions: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getDnsHeader()->numberOfQuestions));
+
+	// Answers
+	string += fmt::format(fmt::fg(fmt::color::orange), "Answers: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getDnsHeader()->numberOfAnswers));
+
+	// Authority
+	string += fmt::format(fmt::fg(fmt::color::orange), "Authority: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getDnsHeader()->numberOfAuthority));
+
+	// Additional
+	string += fmt::format(fmt::fg(fmt::color::orange), "Additional: ");
+	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d}\n", htons(layer.getDnsHeader()->numberOfAdditional));
+
+	// Querys
+	string += fmt::format(fmt::fg(fmt::color::orange), "Querys:\n");
+	pcpp::DnsQuery* query = layer.getFirstQuery();
+	while(query)
+	{
+		// Name
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Name: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", query->getName());
+
+		// Type
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Type: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)query->getDnsType());
+
+		// Class
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Class: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)query->getDnsClass());
+
+		query = layer.getNextQuery(query);
+	}
+
+	// Answers
+	string += fmt::format(fmt::fg(fmt::color::orange), "Answers:\n");
+	pcpp::DnsResource* answer = layer.getFirstAnswer();
+	while(answer)
+	{
+		// Name
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Name: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", answer->getName());
+
+		// Type
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Type: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)answer->getDnsType());
+
+		// Class
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Class: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)answer->getDnsClass());
+
+		// Time to live
+		uint32_t ttl = answer->getTTL();
+		uint8_t h, m, s;
+		h = ttl / 3600;
+		ttl %= 3600;
+		m = ttl / 60;
+		ttl %= 60;
+		s = ttl;
+
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Time to live: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{0:d} (Horas: {1:d}, Minutos: {2:d}, Segundos: {3:d})\n",
+		answer->getTTL(), h, m, s);
+
+
+		// Length
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Data length: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)answer->getDataLength());
+
+		// Data
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Address: ");
+
+		pcpp::DnsResourceDataPtr data = answer->getData();
+		if (data->isTypeOf<pcpp::IPv4DnsResourceData>())
+		{
+			pcpp::IPv4DnsResourceData* address = data->castAs<pcpp::IPv4DnsResourceData>();
+			string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", address->toString());
+		}
+
+		answer = layer.getNextAnswer(answer);
+	}
+
+	layer.getFirstAnswer();
+
+	return string;
+
+}
+
+std::unique_ptr<PrintablePacket> PpacketDNS::getNextLayer(void)
+{
+	return nullptr;
+}
+
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 {
 	if (layer.getProtocol() == pcpp::Ethernet)
@@ -417,6 +527,9 @@ std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 
 	if (layer.getProtocol() == pcpp::UDP)
 		return std::make_unique<PpacketUDP>((pcpp::UdpLayer&)layer);
+
+	if (layer.getProtocol() == pcpp::DNS)
+		return std::make_unique<PpacketDNS>((pcpp::DnsLayer&)layer);
 
 	return nullptr;
 }

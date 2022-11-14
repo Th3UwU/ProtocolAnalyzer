@@ -32,6 +32,7 @@ void Sniffer::init(void)
 		fmt::print(fmt::fg(fmt::color::crimson), "5- IPv6\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "6- TCP\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "7- UDP\n");
+		fmt::print(fmt::fg(fmt::color::crimson), "8- DNS\n");
 		fmt::print(fmt::fg(fmt::color::crimson), "0- Salir\n");
 
 		if (not readInt(opc))
@@ -48,6 +49,7 @@ void Sniffer::init(void)
 			case 5: protocolType = pcpp::IPv6; protocolMenu(); break;
 			case 6: protocolType = pcpp::TCP; protocolMenu(); break;
 			case 7: protocolType = pcpp::UDP; protocolMenu(); break;
+			case 8: protocolType = pcpp::DNS; protocolMenu(); break;
 			default: fmt::print(fmt::fg(fmt::color::red), "Ingrese una opción valida!!\n\n"); break;
 		}
 			

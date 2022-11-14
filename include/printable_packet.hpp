@@ -9,6 +9,7 @@
 #include <pcpp/IcmpLayer.h>
 #include <pcpp/TcpLayer.h>
 #include <pcpp/UdpLayer.h>
+#include <pcpp/DnsLayer.h>
 #include <string>
 #include <memory>
 
@@ -104,6 +105,18 @@ public:
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
 
 	pcpp::UdpLayer& layer;
+};
+
+class PpacketDNS : public PrintablePacket
+{
+public:
+	PpacketDNS(pcpp::DnsLayer& layer);
+	virtual ~PpacketDNS(void) = default;
+
+	virtual std::string toString(void) override;
+	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+
+	pcpp::DnsLayer& layer;
 };
 
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer);
