@@ -10,6 +10,7 @@
 #include <pcpp/TcpLayer.h>
 #include <pcpp/UdpLayer.h>
 #include <pcpp/DnsLayer.h>
+#include <pcpp/DhcpLayer.h>
 #include <string>
 #include <memory>
 
@@ -117,6 +118,18 @@ public:
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
 
 	pcpp::DnsLayer& layer;
+};
+
+class PpacketDHCP : public PrintablePacket
+{
+public:
+	PpacketDHCP(pcpp::DhcpLayer& layer);
+	virtual ~PpacketDHCP(void) = default;
+
+	virtual std::string toString(void) override;
+	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+
+	pcpp::DhcpLayer& layer;
 };
 
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer);

@@ -6,6 +6,8 @@
 #include <fmt/color.h>
 #include <pcpp/Packet.h>
 
+#include <array>
+
 PpacketEthernet::PpacketEthernet(pcpp::EthLayer& layer)
 : layer(layer)
 {}
@@ -558,6 +560,80 @@ std::unique_ptr<PrintablePacket> PpacketDNS::getNextLayer(void)
 	return nullptr;
 }
 
+PpacketDHCP::PpacketDHCP(pcpp::DhcpLayer& layer)
+: layer(layer)
+{}
+
+std::string PpacketDHCP::toString(void)
+{
+	std::string string;
+
+	static const std::array<std::string, 9> messageType = {"Unknown", "Discover", "Offer", "Request", "Decline", "Acknowledge", "Non-Acknowledge", "Release", "Inform"};
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Message Type: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", messageType[(int)layer.getMessageType()]);
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Hardware Type: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{0:s} ({1:#x})\n", (layer.getDhcpHeader()->hardwareType) ? "Ethernet" : "Unknown", layer.getDhcpHeader()->hardwareType);
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Hardware Address Length: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:d}\n", layer.getDhcpHeader()->hardwareAddressLength);
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Hops: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:d}\n", layer.getDhcpHeader()->hops);
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Transtaction ID: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{0:d} ({0:#010x})\n", htonl(layer.getDhcpHeader()->transactionID));
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Seconds elapsed: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{0:d} ({0:#010x})\n", htons(layer.getDhcpHeader()->secondsElapsed));
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Bootp flags: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:016b} ", htons(layer.getDhcpHeader()->flags));
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", (layer.getDhcpHeader()->flags == 0) ? "(Unicast)" : "");
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Client IP address: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", layer.getClientIpAddress().toString());
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Your (Client) IP address: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", layer.getYourIpAddress().toString());
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Server IP address: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", layer.getServerIpAddress().toString());
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Relay IP address: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", layer.getGatewayIpAddress().toString());
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Client MAC address: ");
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", layer.getClientHardwareAddress().toString());
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Server host name: ");
+	char* serverName = (char*)layer.getDhcpHeader()->serverName;
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", (serverName[0]) ? serverName : "not given");
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Boot file name: ");
+	char* bootFileName = (char*)layer.getDhcpHeader()->bootFilename;
+	string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:s}\n", (bootFileName[0]) ? bootFileName : "not given");
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Options:\n");
+	pcpp::DhcpOption option = layer.getFirstOptionData();
+	while (option.isNotNull())
+	{
+
+		string += fmt::format(fmt::fg(fmt::color::green_yellow), "{:d}\n", option.getValue()[-2]);
+		if (option.getValue()[-2] == 255)
+			break;
+		option = layer.getNextOptionData(option);
+	}
+
+
+	return string;
+}
+
+std::unique_ptr<PrintablePacket> PpacketDHCP::getNextLayer(void)
+{
+	return nullptr;
+}
+
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 {
 	if (layer.getProtocol() == pcpp::Ethernet)
@@ -583,6 +659,9 @@ std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 
 	if (layer.getProtocol() == pcpp::DNS)
 		return std::make_unique<PpacketDNS>((pcpp::DnsLayer&)layer);
+
+	if (layer.getProtocol() == pcpp::DHCP)
+		return std::make_unique<PpacketDHCP>((pcpp::DhcpLayer&)layer);
 
 	return nullptr;
 }
