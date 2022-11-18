@@ -11,6 +11,8 @@
 #include <pcpp/PcapFileDevice.h>
 #include <pcpp/Packet.h>
 #include <pcpp/Logger.h>
+#include <pcpp/PcapLiveDevice.h>
+#include <pcpp/PcapLiveDeviceList.h>
 
 Sniffer::Sniffer(void)
 {
@@ -91,7 +93,7 @@ void Sniffer::protocolMenu(void)
 		{
 			case 0: return;
 			case 1: (all ? readAllMenu() : readMenu()); break;
-			case 2: break;
+			case 2: captureMenu(); break;
 			default: fmt::print(fmt::fg(fmt::color::red), "Ingrese una opción valida!!\n\n"); break;
 		}
 			
@@ -188,4 +190,80 @@ void Sniffer::readAllMenu(void)
 	}
 
 	reader->close();
+}
+
+void Sniffer::captureMenu(void)
+{
+	std::vector<pcpp::PcapLiveDevice*> devices = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDevicesList();
+	uint8_t size = (uint8_t)devices.size();
+
+	if (size == 0)
+		return;
+
+	for (uint8_t i = 0; i < size; i++)
+	{
+		fmt::print(fmt::fg(fmt::color::crimson), "{:d}: ", i);
+		fmt::print(fmt::fg(fmt::color::lime), "{:s}\n", devices[i]->getDesc());
+	}
+
+	int deviceIndex = -1;
+	while (deviceIndex < 0 || deviceIndex >= size)
+	{
+		fmt::print(fmt::fg(fmt::color::aquamarine), "Seleccione un dispositivo\n");
+		if (!readInt(deviceIndex))
+			deviceIndex = -1;
+	}
+	pcpp::PcapLiveDevice* dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByIp(devices[deviceIndex]->getIPv4Address());
+
+	int captureTime = 0;
+	while (captureTime <= 0 || captureTime > 20)
+	{
+		fmt::print(fmt::fg(fmt::color::aquamarine), "Tiempo de captura (Segundos)\n");
+		if (!readInt(captureTime))
+			captureTime = 0;
+	}
+
+	if (!dev->open())
+		return;
+
+	////////
+	pcpp::RawPacketVector packetVec;
+	dev->startCapture(packetVec);
+	Sleep(captureTime * 1000);
+	dev->stopCapture();
+
+	for (pcpp::RawPacketVector::VectorIterator iter = packetVec.begin(); iter != packetVec.end(); iter++)
+	{
+		pcpp::Packet parsedPacket(*iter);
+		pcpp::Layer* layer = parsedPacket.getFirstLayer();
+
+		while (layer)
+		{
+				std::unique_ptr<PrintablePacket> pPacket = createPpacketFromLayer(*layer);
+
+				if (pPacket)
+				{
+					if ((all) or (layer->getProtocol() == protocolType))
+					{
+						if (all)
+							fmt::print("-- Protocolo: {:s}\n", pPacket->protocolToString());
+							
+						fmt::print(pPacket->toString());
+						for (int i = 0; i < 64; i++) fmt::print(fmt::fg(fmt::color::crimson), "-");
+						fmt::print("\n");
+					}
+				}
+
+				layer = layer->getNextLayer();
+		}
+
+		if (all)
+		{
+			fmt::print("\n");
+			for (int i = 0; i < 32; i++) fmt::print(fmt::fg(fmt::color::cyan), "*");
+			fmt::print("\n\n");
+		}
+	}
+
+
 }
