@@ -48,6 +48,8 @@ std::unique_ptr<PrintablePacket> PpacketEthernet::getNextLayer(void)
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
+std::string PpacketEthernet::protocolToString(void) {return "Ethernet";}
+
 PpacketIPv4::PpacketIPv4(pcpp::IPv4Layer& layer)
 : layer(layer)
 {}
@@ -146,6 +148,8 @@ std::unique_ptr<PrintablePacket> PpacketIPv4::getNextLayer(void)
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
+std::string PpacketIPv4::protocolToString(void) {return "IPV4";}
+
 PpacketARP::PpacketARP(pcpp::ArpLayer& layer)
 : layer(layer)
 {}
@@ -202,6 +206,8 @@ std::unique_ptr<PrintablePacket> PpacketARP::getNextLayer(void)
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
+std::string PpacketARP::protocolToString(void) {return "ARP";}
+
 PpacketICMP::PpacketICMP(pcpp::IcmpLayer& layer)
 : layer(layer)
 {}
@@ -241,6 +247,8 @@ std::unique_ptr<PrintablePacket> PpacketICMP::getNextLayer(void)
 {
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
+
+std::string PpacketICMP::protocolToString(void) {return "ICMP";}
 
 PpacketIPv6::PpacketIPv6(pcpp::IPv6Layer& layer)
 : layer(layer)
@@ -290,6 +298,8 @@ std::unique_ptr<PrintablePacket> PpacketIPv6::getNextLayer(void)
 {
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
+
+std::string PpacketIPv6::protocolToString(void) {return "IPV6";}
 
 PpacketTCP::PpacketTCP(pcpp::TcpLayer& layer)
 : layer(layer)
@@ -364,6 +374,8 @@ std::unique_ptr<PrintablePacket> PpacketTCP::getNextLayer(void)
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
+std::string PpacketTCP::protocolToString(void) {return "TCP";}
+
 PpacketUDP::PpacketUDP(pcpp::UdpLayer& layer)
 : layer(layer)
 {}
@@ -396,6 +408,8 @@ std::unique_ptr<PrintablePacket> PpacketUDP::getNextLayer(void)
 {
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
+
+std::string PpacketUDP::protocolToString(void) {return "UDP";}
 
 PpacketDNS::PpacketDNS(pcpp::DnsLayer& layer)
 : layer(layer)
@@ -560,6 +574,8 @@ std::unique_ptr<PrintablePacket> PpacketDNS::getNextLayer(void)
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
+std::string PpacketDNS::protocolToString(void) {return "DNS";}
+
 PpacketDHCP::PpacketDHCP(pcpp::DhcpLayer& layer)
 : layer(layer)
 {}
@@ -633,6 +649,8 @@ std::unique_ptr<PrintablePacket> PpacketDHCP::getNextLayer(void)
 {
 	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
+
+std::string PpacketDHCP::protocolToString(void) {return "DHCP";}
 
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
 {

@@ -74,8 +74,12 @@ std::string getProtocolString(pcpp::ProtocolType protocolType)
 		case pcpp::Ethernet: protocolStr = "Ethernet"; break;
 		case pcpp::IPv4: protocolStr = "IPv4"; break;
 		case pcpp::IPv6: protocolStr = "IPv6"; break;
+		case pcpp::ARP: protocolStr = "ARP"; break;
+		case pcpp::ICMP: protocolStr = "ICMP"; break;
 		case pcpp::TCP: protocolStr = "TCP"; break;
 		case pcpp::UDP: protocolStr = "UDP"; break;
+		case pcpp::DNS: protocolStr = "DNS"; break;
+		case pcpp::DHCP: protocolStr = "DHCP"; break;
 		case pcpp::UnknownProtocol: protocolStr = "Desconocido"; break;
 	}
 

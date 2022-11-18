@@ -22,6 +22,7 @@ public:
 
 	virtual std::string toString(void) = 0;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) = 0;
+	virtual std::string protocolToString(void) = 0;
 };
 
 class PpacketEthernet : public PrintablePacket
@@ -32,6 +33,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::EthLayer& layer;
 };
@@ -44,6 +46,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::IPv4Layer& layer;
 };
@@ -56,6 +59,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::ArpLayer& layer;
 };
@@ -68,6 +72,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::IcmpLayer& layer;
 };
@@ -80,6 +85,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::IPv6Layer& layer;
 };
@@ -92,6 +98,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::TcpLayer& layer;
 };
@@ -104,6 +111,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::UdpLayer& layer;
 };
@@ -116,6 +124,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::DnsLayer& layer;
 };
@@ -128,6 +137,7 @@ public:
 
 	virtual std::string toString(void) override;
 	virtual std::unique_ptr<PrintablePacket> getNextLayer(void) override;
+	virtual std::string protocolToString(void) override;
 
 	pcpp::DhcpLayer& layer;
 };

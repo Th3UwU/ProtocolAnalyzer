@@ -14,11 +14,13 @@ public:
 	void init(void);
 	void protocolMenu(void);
 	void readMenu(void);
+	void readAllMenu(void);
 
 	void printPacketEthernet(pcpp::EthLayer* layer);
 	void printPacketIpv4(pcpp::IPv4Layer* layer);
 
 	pcpp::ProtocolType protocolType;
+	bool all;
 };
 
 #endif
