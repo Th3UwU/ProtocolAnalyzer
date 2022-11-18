@@ -143,7 +143,7 @@ std::string PpacketIPv4::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketIPv4::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 PpacketARP::PpacketARP(pcpp::ArpLayer& layer)
@@ -199,7 +199,7 @@ std::string PpacketARP::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketARP::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 PpacketICMP::PpacketICMP(pcpp::IcmpLayer& layer)
@@ -239,7 +239,7 @@ std::string PpacketICMP::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketICMP::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 PpacketIPv6::PpacketIPv6(pcpp::IPv6Layer& layer)
@@ -288,7 +288,7 @@ std::string PpacketIPv6::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketIPv6::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 PpacketTCP::PpacketTCP(pcpp::TcpLayer& layer)
@@ -361,7 +361,7 @@ std::string PpacketTCP::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketTCP::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 PpacketUDP::PpacketUDP(pcpp::UdpLayer& layer)
@@ -394,7 +394,7 @@ std::string PpacketUDP::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketUDP::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 PpacketDNS::PpacketDNS(pcpp::DnsLayer& layer)
@@ -557,7 +557,7 @@ std::string PpacketDNS::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketDNS::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 PpacketDHCP::PpacketDHCP(pcpp::DhcpLayer& layer)
@@ -631,7 +631,7 @@ std::string PpacketDHCP::toString(void)
 
 std::unique_ptr<PrintablePacket> PpacketDHCP::getNextLayer(void)
 {
-	return nullptr;
+	return (createPpacketFromLayer(*layer.getNextLayer()));
 }
 
 std::unique_ptr<PrintablePacket> createPpacketFromLayer(pcpp::Layer& layer)
