@@ -408,7 +408,24 @@ std::string PpacketDNS::toString(void)
 	string += fmt::format(fmt::fg(fmt::color::medium_purple), "{0:d} ({0:#x})\n", htons(layer.getDnsHeader()->transactionID));
 
 	// Flags
-	string += fmt::format(fmt::fg(fmt::color::orange), "FLAGS:\n\n");
+	uint16_t flags = htons(*((uint16_t*)(&layer.getData()[2])));
+	string += fmt::format(fmt::fg(fmt::color::orange), "Flags: ({:#06x})\n", flags);
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Response: {:d}\n", (flags & 0x8000) ? 1 : 0);
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Opcode: {:d}{:d}{:d}{:d}\n",
+	(flags & 0x4000) ? 1 : 0, (flags & 0x2000) ? 1 : 0, (flags & 0x1000) ? 1 : 0, (flags & 0x0800) ? 1 : 0);
+
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Authoritative: {:d}\n", (flags & 0x0400) ? 1 : 0);
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Truncated: {:d}\n", (flags & 0x0200) ? 1 : 0);
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Recursion desired: {:d}\n", (flags & 0x0100) ? 1 : 0);
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Recursion available: {:d}\n", (flags & 0x0080) ? 1 : 0);
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Z: {:d}\n", (flags & 0x0040) ? 1 : 0);
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Answer authenticated: {:d}\n", (flags & 0x0020) ? 1 : 0);
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Non authenticated data: {:d}\n", (flags & 0x0010) ? 1 : 0);
+	
+	string += fmt::format(fmt::fg(fmt::color::cyan), "Reply code: {:d}{:d}{:d}{:d}\n",
+	(flags & 0x0008) ? 1 : 0, (flags & 0x0004) ? 1 : 0, (flags & 0x0002) ? 1 : 0, (flags & 0x0001) ? 1 : 0);
+
 
 	// Questions
 	string += fmt::format(fmt::fg(fmt::color::orange), "Questions: ");
@@ -464,17 +481,11 @@ std::string PpacketDNS::toString(void)
 		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)answer->getDnsClass());
 
 		// Time to live
-		uint32_t ttl = answer->getTTL();
-		uint8_t h, m, s;
-		h = ttl / 3600;
-		ttl %= 3600;
-		m = ttl / 60;
-		ttl %= 60;
-		s = ttl;
+		std::array<uint8_t, 3> time = secondsToTime(answer->getTTL());
 
 		string += fmt::format(fmt::fg(fmt::color::light_pink), "Time to live: ");
 		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{0:d} (Horas: {1:d}, Minutos: {2:d}, Segundos: {3:d})\n",
-		answer->getTTL(), h, m, s);
+		answer->getTTL(), time[0], time[1], time[2]);
 
 
 		// Length
@@ -482,19 +493,61 @@ std::string PpacketDNS::toString(void)
 		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)answer->getDataLength());
 
 		// Data
-		string += fmt::format(fmt::fg(fmt::color::light_pink), "Address: ");
-
 		pcpp::DnsResourceDataPtr data = answer->getData();
 		if (data->isTypeOf<pcpp::IPv4DnsResourceData>())
 		{
+			string += fmt::format(fmt::fg(fmt::color::light_pink), "Address: ");
 			pcpp::IPv4DnsResourceData* address = data->castAs<pcpp::IPv4DnsResourceData>();
 			string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", address->toString());
 		}
+		else if (data->isTypeOf<pcpp::IPv6DnsResourceData>())
+		{
+			string += fmt::format(fmt::fg(fmt::color::light_pink), "Address: ");
+			pcpp::IPv6DnsResourceData* address = data->castAs<pcpp::IPv6DnsResourceData>();
+			string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", address->toString());
+		}
+		else
+			string += fmt::format(fmt::fg(fmt::color::red), "Unknown data-type\n");
 
 		answer = layer.getNextAnswer(answer);
 	}
 
-	layer.getFirstAnswer();
+ 	// Authoritative
+	string += fmt::format(fmt::fg(fmt::color::orange), "Authoritatives:\n");
+	pcpp::DnsResource* auth = layer.getFirstAuthority();
+	while (auth)
+	{
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Name: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", auth->getName());
+
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Type: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)auth->getDnsType());
+
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Class: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", (int)auth->getDnsClass());
+
+		std::array<uint8_t, 3> time = secondsToTime(auth->getTTL());
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Time to live: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{0:d} (Horas: {1:d}, Minutos: {2:d}, Segundos: {3:d})\n",
+		auth->getTTL(), time[0], time[1], time[2]);
+
+		string += fmt::format(fmt::fg(fmt::color::light_pink), "Data length: ");
+		string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:d}\n", auth->getDataLength());
+
+		pcpp::DnsResourceDataPtr data = auth->getData();
+		if (data.isTypeOf<pcpp::StringDnsResourceData>())
+		{
+			pcpp::StringDnsResourceData* strdns = data.castAs<pcpp::StringDnsResourceData>();
+			string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", strdns->toString());
+		}
+		else if (data.isTypeOf<pcpp::MxDnsResourceData>())
+		{
+			pcpp::MxDnsResourceData* mx = data.castAs<pcpp::MxDnsResourceData>();
+			string += fmt::format(fmt::fg(fmt::color::royal_blue), "{:s}\n", mx->toString());
+		}
+
+		auth = layer.getNextAuthority(auth);
+	}
 
 	return string;
 

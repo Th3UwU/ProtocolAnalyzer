@@ -81,3 +81,15 @@ std::string getProtocolString(pcpp::ProtocolType protocolType)
 
 	return protocolStr;
 }
+
+std::array<uint8_t, 3> secondsToTime(uint32_t seconds)
+{
+	std::array<uint8_t, 3> time;
+	time[0] = seconds / 3600;
+	seconds %= 3600;
+	time[1] = seconds / 60;
+	seconds %= 60;
+	time[2] = seconds;
+
+	return time;
+}
